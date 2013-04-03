@@ -1,0 +1,1 @@
+Add all resources projects/work files (not compiled)
