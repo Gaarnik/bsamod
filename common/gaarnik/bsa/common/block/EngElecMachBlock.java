@@ -184,8 +184,7 @@ public class EngElecMachBlock extends BlockMachine {
 		return BSAMod.engMachBlock.blockID;
 	}
 
-	public int getBlockTextureFromSide(int side)
-	{
+	public int getBlockTextureFromSide(int side) {
 		return side == 1 ? TEXTURE_NUM + 3 : (side == 0 ? TEXTURE_NUM + 3 : (side == 3 ? TEXTURE_NUM : TEXTURE_NUM + 2));
 	}
 	

@@ -1,7 +1,9 @@
 package gaarnik.bsa.common;
 
+import gaarnik.bsa.client.gui.BlockReplacerGui;
 import gaarnik.bsa.client.gui.EngElecMachGui;
 import gaarnik.bsa.client.gui.EngMachGui;
+import gaarnik.bsa.common.container.BlockReplacerContainer;
 import gaarnik.bsa.common.container.EngElecMachContainer;
 import gaarnik.bsa.common.container.EngMachContainer;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
@@ -15,6 +17,7 @@ public class BSAGuiHandler implements IGuiHandler {
 	// *******************************************************************
 	public static final int GUI_ENG_MACH = 1;
 	public static final int GUI_ELECTRICAL_ENG_MACH = 2;
+	public static final int GUI_BLOCK_REPLACER = 3;
 
 	// *******************************************************************
 	@Override
@@ -30,8 +33,12 @@ public class BSAGuiHandler implements IGuiHandler {
 		case GUI_ELECTRICAL_ENG_MACH:
 			if(tileEntity instanceof EngElecMachTileEntity)
 				return new EngElecMachContainer(player.inventory, (EngElecMachTileEntity) tileEntity);
+			
+		case GUI_BLOCK_REPLACER:
+			return new BlockReplacerContainer(player);
 
 		}
+		
 		return null;
 	}
 
@@ -49,6 +56,9 @@ public class BSAGuiHandler implements IGuiHandler {
 		case GUI_ELECTRICAL_ENG_MACH:
 			if(tileEntity instanceof EngElecMachTileEntity)
 				return new EngElecMachGui(player.inventory, (EngElecMachTileEntity) tileEntity);
+			
+		case GUI_BLOCK_REPLACER:
+			return new BlockReplacerGui(player);
 
 		}
 

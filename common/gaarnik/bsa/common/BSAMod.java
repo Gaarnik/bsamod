@@ -2,6 +2,7 @@ package gaarnik.bsa.common;
 
 import gaarnik.bsa.common.block.BSABlocks;
 import gaarnik.bsa.common.item.BSAItems;
+import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 import gaarnik.bsa.common.tileentity.EngMachTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -44,6 +45,9 @@ public class BSAMod {
 	public static Block structureIronBlock;
 	public static Block gridIronBlock;
 	
+	public static Block renforcedStairslock;
+	public static Block renforcedDarkStairslock;
+	
 	public static Block engMachBlock;
 	public static Block engMachActiveBlock;
 
@@ -52,6 +56,8 @@ public class BSAMod {
 	// *******************************************************************
 	public static Item screwItem;
 	public static Item engCircuitItem;
+	
+	public static Item blockReplacerItem;
 
 	// *******************************************************************
 	@PreInit
@@ -70,7 +76,7 @@ public class BSAMod {
 		BSABlocks.registry();
 		
 		GameRegistry.registerTileEntity(EngMachTileEntity.class, "EngMachBlock");
-		//GameRegistry.registerTileEntity(EngElecMachTileEntity.class, "EngElecMachBlock");
+		GameRegistry.registerTileEntity(EngElecMachTileEntity.class, "EngElecMachBlock");
 		
 		NetworkRegistry.instance().registerGuiHandler(this, engGuiHandler);
 	}
