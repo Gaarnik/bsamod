@@ -8,22 +8,21 @@ import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import universalelectricity.prefab.BlockMachine;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EngElecMachBlock extends BlockMachine {
+public class EngElecMachBlock extends BlockContainer {
 	// *******************************************************************
 	private static final String GAME_NAME = "Eng. Electrical Machine";
 
@@ -31,7 +30,7 @@ public class EngElecMachBlock extends BlockMachine {
 
 	// *******************************************************************
 	private Random rand = new Random();
-	
+
 	private final boolean isActive;
 
 	// *******************************************************************
@@ -52,12 +51,14 @@ public class EngElecMachBlock extends BlockMachine {
 	}
 
 	@Override
-	public boolean onMachineActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-		if (!world.isRemote) {
-			player.openGui(BSAMod.instance, BSAGuiHandler.GUI_ELECTRICAL_ENG_MACH, world, x, y, z);
-			return true;
-		}
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+
+		if (tileEntity == null || player.isSneaking())
+			return false;
 		
+		player.openGui(BSAMod.instance, BSAGuiHandler.GUI_ELECTRICAL_ENG_MACH, world, x, y, z);
+
 		return true;
 	}
 
@@ -94,10 +95,10 @@ public class EngElecMachBlock extends BlockMachine {
 		int var5 = world.getBlockMetadata(x, y, z);
 		TileEntity var6 = world.getBlockTileEntity(x, y, z);
 
-		if (isActive)
+		/*if (isActive)
 			world.setBlockWithNotify(x, y, z, BSAMod.engMachActiveBlock.blockID);
 		else
-			world.setBlockWithNotify(x, y, z, BSAMod.engMachBlock.blockID);
+			world.setBlockWithNotify(x, y, z, BSAMod.engMachBlock.blockID);*/
 
 		world.setBlockMetadataWithNotify(x, y, z, var5);
 
@@ -108,7 +109,8 @@ public class EngElecMachBlock extends BlockMachine {
 	}
 
 	public void breakBlock(World world, int par2, int par3, int par4, int par5, int par6) {
-		EngElecMachTileEntity var7 = (EngElecMachTileEntity) world.getBlockTileEntity(par2, par3, par4);
+		//TDOD drop machine inventory
+		/*EngElecMachTileEntity var7 = (EngElecMachTileEntity) world.getBlockTileEntity(par2, par3, par4);
 
 		if (var7 != null) {
 			for (int var8 = 0; var8 < var7.getSizeInventory(); ++var8) {
@@ -129,7 +131,7 @@ public class EngElecMachBlock extends BlockMachine {
 						EntityItem var14 = new EntityItem(world, (double)((float)par2 + var10), (double)((float)par3 + var11), (double)((float)par4 + var12), new ItemStack(var9.itemID, var13, var9.getItemDamage()));
 
 						//if (var9.hasTagCompound())
-							//var14.func_92014_d().setTagCompound((NBTTagCompound)var9.getTagCompound().copy());
+						//var14.func_92014_d().setTagCompound((NBTTagCompound)var9.getTagCompound().copy());
 
 						float var15 = 0.05F;
 						var14.motionX = (double)((float)this.rand.nextGaussian() * var15);
@@ -139,7 +141,7 @@ public class EngElecMachBlock extends BlockMachine {
 					}
 				}
 			}
-		}
+		}*/
 
 		super.breakBlock(world, par2, par3, par4, par5, par6);
 	}
@@ -177,6 +179,8 @@ public class EngElecMachBlock extends BlockMachine {
 
 		GameRegistry.registerBlock(BSAMod.engElecMachBlock, "engElecMachBlock");
 		LanguageRegistry.addName(BSAMod.engElecMachBlock, GAME_NAME);
+
+		MinecraftForge.setBlockHarvestLevel(BSAMod.engElecMachBlock, "pickaxe", 2);
 	}
 
 	// *******************************************************************
@@ -187,12 +191,13 @@ public class EngElecMachBlock extends BlockMachine {
 	public int getBlockTextureFromSide(int side) {
 		return side == 1 ? TEXTURE_NUM + 3 : (side == 0 ? TEXTURE_NUM + 3 : (side == 3 ? TEXTURE_NUM : TEXTURE_NUM + 2));
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return BSAClientProxy.BLOCKS_TEXTURE;
 	}
-	
+
+	@Override
 	public TileEntity createNewTileEntity(World world) { return new EngElecMachTileEntity(); }
 
 }

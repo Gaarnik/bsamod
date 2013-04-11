@@ -28,9 +28,9 @@ public class EngMachContainer extends Container {
 		this.addSlotToContainer(new Slot(tileEntity, 0, 37, 17));
 		this.addSlotToContainer(new Slot(tileEntity, 1, 37, 53));
 		
-		this.addSlotToContainer(new EngMachSlot(player.player, tileEntity, 2, 96, 19));
-		this.addSlotToContainer(new EngMachSlot(player.player, tileEntity, 3, 126, 19));
-		this.addSlotToContainer(new EngMachSlot(player.player, tileEntity, 4, 96, 49));
+		this.addSlotToContainer(new EngMachSlot(player.player, tileEntity, 2, 97, 20));
+		this.addSlotToContainer(new EngMachSlot(player.player, tileEntity, 3, 126, 20));
+		this.addSlotToContainer(new EngMachSlot(player.player, tileEntity, 4, 97, 49));
 		this.addSlotToContainer(new EngMachSlot(player.player, tileEntity, 5, 126, 49));
 		
 		int var3;

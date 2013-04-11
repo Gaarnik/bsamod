@@ -1,38 +1,40 @@
 package gaarnik.bsa.common.tileentity;
 
 import gaarnik.bsa.common.recipe.EngMachRecipe;
+import ic2.api.Direction;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergySink;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
-import universalelectricity.core.electricity.ElectricityPack;
-import universalelectricity.core.vector.Vector3;
-import universalelectricity.prefab.network.IPacketReceiver;
-import universalelectricity.prefab.network.PacketManager;
-import universalelectricity.prefab.tile.TileEntityElectricityRunnable;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
 
-import com.google.common.io.ByteArrayDataInput;
-
-public class EngElecMachTileEntity extends TileEntityElectricityRunnable implements IInventory, ISidedInventory, IPacketReceiver{
+public class EngElecMachTileEntity extends TileEntity implements IInventory, IEnergySink {
 	// *******************************************************************
-	public static final double WATTS_PER_TICK = 500;
-	public static final int PROCESS_TIME_REQUIRED = 130;
-
+	public static final int MAX_ENERGY = 500;
+	public static final int MAX_PROCESS_TICKS = 50;
+	
+	private static final int MAX_INPUT = 32;
+	private static final int ENERGY_CONSUME = 2;
+	
 	// *******************************************************************
-	private ItemStack[] containingItems = new ItemStack[3];
-
-	public int processTicks = 0;
-	private int playersUsing = 0;
-
+	private ItemStack[] stacks = new ItemStack[5];
+	
+	private int energyStored;
+	
+	private int processTicks;
+	
+	private boolean addedToNetwork;
+	
 	// *******************************************************************
 	public EngElecMachTileEntity() {
-
+		this.addedToNetwork = false;
+		
+		this.energyStored = 0;
 	}
 
 	// *******************************************************************
@@ -40,80 +42,123 @@ public class EngElecMachTileEntity extends TileEntityElectricityRunnable impleme
 	public void updateEntity() {
 		super.updateEntity();
 
-		//this.wattsReceived += ElectricItemHelper.dechargeItem(this.containingItems[0], WATTS_PER_TICK, this.getVoltage());
-
-		if (!this.worldObj.isRemote) {
-			if (this.canProcess()) {
-				if (this.wattsReceived >= WATTS_PER_TICK)
-					this.processTicks = PROCESS_TIME_REQUIRED;
-				else if (this.processTicks > 0) {
-					this.processTicks--;
-
-					if (this.processTicks < 1) {
-						this.smeltItem();
-						this.processTicks = 0;
-					}
-				}
-				else
-					this.processTicks = 0;
-			}
-			else
-				this.processTicks = 0;
-
-			this.wattsReceived = Math.max(this.wattsReceived - WATTS_PER_TICK / 4, 0);
+		if(this.addedToNetwork == false) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+			this.addedToNetwork = true;
 		}
-		else
-			this.processTicks = 0;
-
-		if (this.ticks % 3 == 0 && this.playersUsing > 0)
-			PacketManager.sendPacketToClients(getDescriptionPacket(), this.worldObj, new Vector3(this), 12);
+		
+		if(this.energyStored >= ENERGY_CONSUME && this.canProcess()) {
+			this.energyStored -= ENERGY_CONSUME;
+			this.processTicks++;
+			
+			if(this.processTicks >= MAX_PROCESS_TICKS) {
+				this.smeltItem();
+				this.processTicks = 0;
+			}
+		}
 	}
 	
 	@Override
-	public ItemStack decrStackSize(int par1, int par2) {
-		if (this.containingItems[par1] != null) {
-			ItemStack var3;
+	public void invalidate() {
+		super.invalidate();
+		
+		if (this.addedToNetwork) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+            this.addedToNetwork = false;
+        }
+	}
 
-			if (this.containingItems[par1].stackSize <= par2) {
-				var3 = this.containingItems[par1];
-				this.containingItems[par1] = null;
-				return var3;
+	@Override
+	public int injectEnergy(Direction directionFrom, int amount) {
+		//TODO explode
+		if(amount > MAX_INPUT) {
+			return 0;
+		}
+		
+		this.energyStored += amount;
+        int excess = 0;
+        
+        if (this.energyStored > MAX_ENERGY) {
+        	excess = this.energyStored - MAX_ENERGY;
+            this.energyStored = MAX_ENERGY;
+        }
+
+        return excess;
+	}
+	
+	public void smeltItem() {
+		if (this.canProcess()) {
+			ItemStack stack = EngMachRecipe.smelting().getSmeltingResult(this.stacks[0]);
+
+			for(int slot=1;slot<=4;slot++) {
+				if(this.isSlotFull(slot, stack) == true)
+					continue;
+				
+				boolean smelted = false;
+				
+				if (this.stacks[slot] == null) {
+					this.stacks[slot] = stack.copy();
+					smelted = true;
+				}
+				else if (this.stacks[slot].isItemEqual(stack)) {
+					stacks[slot].stackSize += stack.stackSize;
+					smelted = true;
+				}
+				
+				if(smelted == true) {
+					--this.stacks[0].stackSize;
+
+					if (this.stacks[0].stackSize <= 0)
+						this.stacks[0] = null;
+					
+					return;
+				}
+			}
+		}
+	}
+	
+	public ItemStack decrStackSize(int position, int count) {
+		if (this.stacks[position] != null) {
+			ItemStack stack;
+
+			if (this.stacks[position].stackSize <= count) {
+				stack = this.stacks[position];
+				this.stacks[position] = null;
+
+				return stack;
 			}
 			else {
-				var3 = this.containingItems[par1].splitStack(par2);
+				stack = this.stacks[position].splitStack(count);
 
-				if (this.containingItems[par1].stackSize == 0)
-					this.containingItems[par1] = null;
+				if (this.stacks[position].stackSize == 0)
+					this.stacks[position] = null;
 
-				return var3;
+				return stack;
 			}
 		}
 		else
 			return null;
 	}
 	
-	@Override
-	public ItemStack getStackInSlotOnClosing(int par1) {
-		if (this.containingItems[par1] != null) {
-			ItemStack var2 = this.containingItems[par1];
-			this.containingItems[par1] = null;
-			return var2;
-		}
-		else
-			return null;
-	}
-	
-	@Override
-	public void setInventorySlotContents(int par1, ItemStack par2ItemStack) {
-		this.containingItems[par1] = par2ItemStack;
+	public ItemStack getStackInSlotOnClosing(int position) {
+		if (this.stacks[position] != null) {
+			ItemStack stack = this.stacks[position];
+			this.stacks[position] = null;
 
-		if (par2ItemStack != null && par2ItemStack.stackSize > this.getInventoryStackLimit())
-			par2ItemStack.stackSize = this.getInventoryStackLimit();
+			return stack;
+		}
+		
+		return null;
 	}
-	
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer) {
-		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
+
+	public void setInventorySlotContents(int position, ItemStack stack) {
+		this.stacks[position] = stack;
+
+		if (stack != null && stack.stackSize > this.getInventoryStackLimit())
+			stack.stackSize = this.getInventoryStackLimit();
+		
+		if(position == 0 && stack == null)
+			this.processTicks = 0;
 	}
 	
 	@Override
@@ -124,127 +169,104 @@ public class EngElecMachTileEntity extends TileEntityElectricityRunnable impleme
 
 	// *******************************************************************
 	@Override
-	public ElectricityPack getRequest() {
-		if (this.canProcess())
-			return new ElectricityPack(WATTS_PER_TICK / this.getVoltage(), this.getVoltage());
-		else
-			return new ElectricityPack();
-	}
-
-	@Override
-	public Packet getDescriptionPacket() {
-		return PacketManager.getPacket("BSAModChannel", this, this.processTicks, this.disabledTicks);
-	}
-
-	@Override
-	public void handlePacketData(INetworkManager network, int packetType, Packet250CustomPayload packet, EntityPlayer player, ByteArrayDataInput dataStream) {
-		try {
-			this.processTicks = dataStream.readInt();
-			this.disabledTicks = dataStream.readInt();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	// *******************************************************************
-	private boolean canProcess() {
-		if (EngMachRecipe.smelting().getSmeltingResult(this.containingItems[1]) == null)
-			return false;
-
-		if (this.containingItems[1] == null)
-			return false;
-
-		if (this.containingItems[2] != null) {
-			if (!this.containingItems[2].isItemEqual(EngMachRecipe.smelting().getSmeltingResult(this.containingItems[1])))
-				return false;
-
-			if (this.containingItems[2].stackSize + 1 > 64)
-				return false;
-		}
-
-		return true;
-	}
-	
-	private void smeltItem() {
-		if (this.canProcess()) {
-			ItemStack resultItemStack = EngMachRecipe.smelting().getSmeltingResult(this.containingItems[1]);
-
-			if (this.containingItems[2] == null)
-				this.containingItems[2] = resultItemStack.copy();
-			else if (this.containingItems[2].isItemEqual(resultItemStack))
-				this.containingItems[2].stackSize++;
-
-			this.containingItems[1].stackSize--;
-
-			if (this.containingItems[1].stackSize <= 0)
-				this.containingItems[1] = null;
-		}
-	}
-
-	// *******************************************************************
-	@Override
-	public void readFromNBT(NBTTagCompound NBT) {
-		super.readFromNBT(NBT);
+	public void readFromNBT(NBTTagCompound tag) {
+		super.readFromNBT(tag);
 		
-		this.processTicks = NBT.getInteger("smeltingTicks");
-		NBTTagList var2 = NBT.getTagList("Items");
-		this.containingItems = new ItemStack[this.getSizeInventory()];
+		NBTTagList var2 = tag.getTagList("Items1");
+		this.stacks = new ItemStack[this.getSizeInventory()];
 
 		for (int var3 = 0; var3 < var2.tagCount(); ++var3) {
-			NBTTagCompound var4 = (NBTTagCompound) var2.tagAt(var3);
-			byte var5 = var4.getByte("Slot");
+			NBTTagCompound var4 = (NBTTagCompound)var2.tagAt(var3);
+			byte var5 = var4.getByte("Slot1");
 
-			if (var5 >= 0 && var5 < this.containingItems.length)
-			{
-				this.containingItems[var5] = ItemStack.loadItemStackFromNBT(var4);
-			}
+			if (var5 >= 0 && var5 < this.stacks.length)
+				this.stacks[var5] = ItemStack.loadItemStackFromNBT(var4);
 		}
+		
+		this.energyStored = tag.getInteger("energyStored");
+		this.processTicks = tag.getInteger("processTicks");
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound NBT) {
-		super.writeToNBT(NBT);
+	public void writeToNBT(NBTTagCompound tag) {
+		super.writeToNBT(tag);
 		
-		NBT.setInteger("smeltingTicks", this.processTicks);
 		NBTTagList var2 = new NBTTagList();
 
-		for (int var3 = 0; var3 < this.containingItems.length; ++var3)
-		{
-			if (this.containingItems[var3] != null)
-			{
+		for (int var3 = 0; var3 < this.stacks.length; ++var3) {
+			if (this.stacks[var3] != null) {
 				NBTTagCompound var4 = new NBTTagCompound();
-				var4.setByte("Slot", (byte) var3);
-				this.containingItems[var3].writeToNBT(var4);
+				var4.setByte("Slot1", (byte)var3);
+				this.stacks[var3].writeToNBT(var4);
 				var2.appendTag(var4);
 			}
 		}
 
-		NBT.setTag("Items", var2);
+		tag.setTag("Items1", var2);
+		
+		tag.setInteger("energyStored", this.energyStored);
+		tag.setInteger("processTicks", this.processTicks);
+	}
+
+	// *******************************************************************
+	private boolean canProcess() {
+		if (this.stacks[0] == null)
+			return false;
+
+		ItemStack stack = EngMachRecipe.smelting().getSmeltingResult(this.stacks[0]);
+
+		if (stack == null) return false;
+
+		for(int i=1;i<=4;i++)
+			if(this.isSlotFull(i, stack) == false)
+				return true;
+
+		return false;
+	}
+
+	private boolean isSlotFull(int slot, ItemStack stack) {
+		if (this.stacks[slot] == null) return false;
+		if (!this.stacks[slot].isItemEqual(stack)) return false;
+
+		int result = stacks[slot].stackSize + stack.stackSize;
+		return !(result <= getInventoryStackLimit() && result <= stack.getMaxStackSize());
 	}
 
 	// *******************************************************************
 	@Override
-	public int getSizeInventory() { return this.containingItems.length; }
+	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) {
+		return true;
+	}
 	
 	@Override
-	public ItemStack getStackInSlot(int par1) { return this.containingItems[par1]; }
+	public boolean isAddedToEnergyNet() { return this.addedToNetwork; }
+
+	@Override
+	public int demandsEnergy() { return MAX_ENERGY - this.energyStored; }
+
+	@Override
+	public int getMaxSafeInput() { return MAX_INPUT; }
 	
+	public int getEnergyStored() { return this.energyStored; }
+	public void setEnergyStored(int stored) { this.energyStored = stored; }
+	
+	public int getProcessTicks() { return this.processTicks; }
+	public void setProcessTicks(int ticks) { this.processTicks = ticks; }
+
+	@Override
+	public int getSizeInventory() { return this.stacks.length; }
+
+	@Override
+	public ItemStack getStackInSlot(int slot) { return this.stacks[slot]; }
+
+	@Override
 	public String getInvName() { return "container.EngElecMach"; }
-	
+
 	@Override
 	public int getInventoryStackLimit() { return 64; }
 
 	@Override
-	public int getStartInventorySide(ForgeDirection side) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public boolean isUseableByPlayer(EntityPlayer var1) { return true; }
 
-	@Override
-	public int getSizeInventorySide(ForgeDirection side) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 }

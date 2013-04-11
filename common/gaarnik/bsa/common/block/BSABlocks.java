@@ -24,8 +24,7 @@ public class BSABlocks {
 		
 		EngMachBlock.registry();
 		
-		//EngElecMachBlock.registry();
-		EngElecMachBlock2.registry();
+		EngElecMachBlock.registry();
 	}
 
 }
