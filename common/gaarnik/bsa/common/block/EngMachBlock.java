@@ -190,6 +190,8 @@ public class EngMachBlock extends BlockContainer {
 		id = BSAMod.config.getBlock("EngMachActiveBlock", BSABlocks.ENG_MACH_ACTIVE_ID).getInt();
 
 		BSAMod.engMachActiveBlock = new EngMachBlock(id, true)
+		.setHardness(7.0f)
+		.setResistance(15.0f)
 		.setStepSound(Block.soundAnvilFootstep)
 		.setBlockName("EngMachBlock");
 

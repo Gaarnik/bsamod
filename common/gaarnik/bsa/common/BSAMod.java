@@ -3,6 +3,7 @@ package gaarnik.bsa.common;
 import gaarnik.bsa.common.block.BSABlocks;
 import gaarnik.bsa.common.item.BSAItems;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
+import gaarnik.bsa.common.tileentity.EngElecMachTileEntity2;
 import gaarnik.bsa.common.tileentity.EngMachTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -77,6 +78,7 @@ public class BSAMod {
 		
 		GameRegistry.registerTileEntity(EngMachTileEntity.class, "EngMachBlock");
 		GameRegistry.registerTileEntity(EngElecMachTileEntity.class, "EngElecMachBlock");
+		GameRegistry.registerTileEntity(EngElecMachTileEntity2.class, "EngElecMachBlock2");
 		
 		NetworkRegistry.instance().registerGuiHandler(this, engGuiHandler);
 	}

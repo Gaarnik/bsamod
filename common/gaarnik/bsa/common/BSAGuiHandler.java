@@ -2,11 +2,15 @@ package gaarnik.bsa.common;
 
 import gaarnik.bsa.client.gui.BlockReplacerGui;
 import gaarnik.bsa.client.gui.EngElecMachGui;
+import gaarnik.bsa.client.gui.EngElecMachGui2;
 import gaarnik.bsa.client.gui.EngMachGui;
 import gaarnik.bsa.common.container.BlockReplacerContainer;
 import gaarnik.bsa.common.container.EngElecMachContainer;
+import gaarnik.bsa.common.container.EngElecMachContainer2;
 import gaarnik.bsa.common.container.EngMachContainer;
+import gaarnik.bsa.common.tileentity.BlockReplacerTileEntity;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
+import gaarnik.bsa.common.tileentity.EngElecMachTileEntity2;
 import gaarnik.bsa.common.tileentity.EngMachTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +22,8 @@ public class BSAGuiHandler implements IGuiHandler {
 	public static final int GUI_ENG_MACH = 1;
 	public static final int GUI_ELECTRICAL_ENG_MACH = 2;
 	public static final int GUI_BLOCK_REPLACER = 3;
+	
+	public static final int GUI_ELECTRICAL_ENG_MACH_2 = 4;
 
 	// *******************************************************************
 	@Override
@@ -35,7 +41,12 @@ public class BSAGuiHandler implements IGuiHandler {
 				return new EngElecMachContainer(player.inventory, (EngElecMachTileEntity) tileEntity);
 			
 		case GUI_BLOCK_REPLACER:
-			return new BlockReplacerContainer(player);
+			BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
+			return new BlockReplacerContainer(player, entity);
+			
+		case GUI_ELECTRICAL_ENG_MACH_2:
+			if(tileEntity instanceof EngElecMachTileEntity2)
+				return new EngElecMachContainer2(player.inventory, (EngElecMachTileEntity2) tileEntity);
 
 		}
 		
@@ -58,7 +69,12 @@ public class BSAGuiHandler implements IGuiHandler {
 				return new EngElecMachGui(player.inventory, (EngElecMachTileEntity) tileEntity);
 			
 		case GUI_BLOCK_REPLACER:
-			return new BlockReplacerGui(player);
+			BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
+			return new BlockReplacerGui(player, entity);
+
+		case GUI_ELECTRICAL_ENG_MACH_2:
+			if(tileEntity instanceof EngElecMachTileEntity2)
+				return new EngElecMachGui2(player.inventory, (EngElecMachTileEntity2) tileEntity);
 
 		}
 
