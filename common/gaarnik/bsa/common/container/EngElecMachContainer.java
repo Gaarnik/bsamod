@@ -79,11 +79,19 @@ public class EngElecMachContainer extends Container {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void updateProgressBar(int par1, int value) {
-		if (par1 == UPDATE_STORED)
-			this.tileEntity.setEnergyStored(value);
-		else if (par1 == UPDATE_PROCESS)
+	public void updateProgressBar(int id, int value) {
+		
+		switch(id) {
+		
+		case UPDATE_STORED:
+			this.tileEntity.setEnergyStored(this.tileEntity.getEnergyStored() & -65536 | value);
+			break;
+			
+		case UPDATE_PROCESS:
 			this.tileEntity.setProcessTicks(value);
+			break;
+		
+		}
 	}
 	
 	// *******************************************************************

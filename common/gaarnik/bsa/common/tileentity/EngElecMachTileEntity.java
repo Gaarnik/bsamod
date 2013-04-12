@@ -47,6 +47,9 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, IEn
 			this.addedToNetwork = true;
 		}
 		
+		if(this.worldObj.isRemote)
+			return;
+		
 		if(this.energyStored >= ENERGY_CONSUME && this.canProcess()) {
 			this.energyStored -= ENERGY_CONSUME;
 			this.processTicks++;
@@ -125,6 +128,9 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, IEn
 				stack = this.stacks[position];
 				this.stacks[position] = null;
 
+				if(position == 0) //if resource slot is empty reset processTicks
+					this.processTicks = 0; //TODO work but no gui update
+				
 				return stack;
 			}
 			else {
@@ -156,9 +162,6 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, IEn
 
 		if (stack != null && stack.stackSize > this.getInventoryStackLimit())
 			stack.stackSize = this.getInventoryStackLimit();
-		
-		if(position == 0 && stack == null)
-			this.processTicks = 0;
 	}
 	
 	@Override
