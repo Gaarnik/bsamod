@@ -1,5 +1,6 @@
 package gaarnik.bsa.common.tileentity;
 
+import ic2.api.IElectricItem;
 import gaarnik.bsa.common.BSAMod;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -7,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-public class BlockReplacerTileEntity extends TileEntity implements IInventory {
+public class BlockReplacerTileEntity extends TileEntity implements IInventory, IElectricItem {
 	// *******************************************************************
 
 	// *******************************************************************
@@ -73,6 +74,43 @@ public class BlockReplacerTileEntity extends TileEntity implements IInventory {
 
 	@Override
 	public void closeChest() {}
+
+	// *******************************************************************
+	@Override
+	public boolean canProvideEnergy() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getChargedItemId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getEmptyItemId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxCharge() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getTier() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getTransferLimit() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 	// *******************************************************************
 	private ItemStack loadFromBlockReplacerItemStack(EntityPlayer player) {

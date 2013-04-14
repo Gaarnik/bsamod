@@ -1,7 +1,10 @@
 package gaarnik.bsa.client;
 
-import net.minecraftforge.client.MinecraftForgeClient;
 import gaarnik.bsa.common.BSACommonProxy;
+import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.MinecraftForge;
 
 public class BSAClientProxy extends BSACommonProxy {
 	// *******************************************************************
@@ -28,6 +31,12 @@ public class BSAClientProxy extends BSACommonProxy {
 		MinecraftForgeClient.preloadTexture(ENGMACH_GUI);
 		MinecraftForgeClient.preloadTexture(ELECENGMACH_GUI);
 		MinecraftForgeClient.preloadTexture(BLOCKREPLACER_GUI);
+	}
+
+	// *******************************************************************
+	@Override
+	public void addMachineToIc2Network(EngElecMachTileEntity machine) {
+		MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(machine));
 	}
 
 }
