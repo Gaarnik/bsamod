@@ -1,5 +1,6 @@
 package gaarnik.bsa.common.item;
 
+import gaarnik.bsa.client.BSAClientProxy;
 import gaarnik.bsa.common.BSAGuiHandler;
 import gaarnik.bsa.common.BSAMod;
 import gaarnik.bsa.common.tileentity.BlockReplacerTileEntity;
@@ -18,7 +19,10 @@ public class BlockReplacerItem extends Item {
 	// *******************************************************************
 	public BlockReplacerItem(int id) {
 		super(id);
-
+		
+		this.setIconIndex(3);
+		this.setItemName("BlockReplacerItem");
+		
 		this.setCreativeTab(BSAMod.tabs);
 	}
 
@@ -69,23 +73,27 @@ public class BlockReplacerItem extends Item {
 	public static void registry() {
 		int id = BSAMod.config.getItem("BlockReplacerItem", BSAItems.BLOCK_REPLACER_ID).getInt();
 
-		BSAMod.blockReplacerItem = new BlockReplacerItem(id)
-		.setIconIndex(0)
-		.setItemName("BlockReplacerItem");
+		BSAMod.blockReplacerItem = new BlockReplacerItem(id);
+		
+		//TODO replace iron by re-battery, if no item not create recipe
 
-		//TODO add recipe
-		/*ItemStack ironStack = new ItemStack(Item.ingotIron, 1);
-		ItemStack screwStack = new ItemStack(BSAMod.screwItem, 1);
-		ItemStack middleStack = new ItemStack(RECEIPE_MIDDLE_BLOCKS[i], 1, 0);
+		ItemStack stack = new ItemStack(BSAMod.blockReplacerItem, 1);
+		ItemStack headStack = new ItemStack(BSAMod.blockReplacerHeadItem, 1);
+		ItemStack circuitStack = new ItemStack(BSAMod.engCircuitItem, 1);
+		ItemStack ironStack = new ItemStack(Item.ingotIron, 1);
+		ItemStack lapisStack = new ItemStack(Item.dyePowder, 1);
+		lapisStack.setItemDamage(4);
 
 		GameRegistry.addRecipe(stack, new Object[] {
-			"YXY", "XZX", "YXY", 'X', ironStack, 'Y', screwStack, 'Z', middleStack
-		});*/
+			"  X", " Y ", "ZA ", 'X', headStack, 'Y', lapisStack, 'Z', ironStack, 'A', circuitStack
+		});
 
 		GameRegistry.registerItem(BSAMod.blockReplacerItem, "blockReplacerItem");
 		LanguageRegistry.addName(BSAMod.blockReplacerItem, "Block Replacer");
 	}
 
 	// *******************************************************************
+	@Override
+	public String getTextureFile() { return BSAClientProxy.ITEMS_TEXTURE; }
 
 }

@@ -1,5 +1,7 @@
 package gaarnik.bsa.common;
 
+import java.util.Random;
+
 import gaarnik.bsa.common.block.BSABlocks;
 import gaarnik.bsa.common.item.BSAItems;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
@@ -37,6 +39,8 @@ public class BSAMod {
 	public static Configuration config;
 	
 	public static CreativeTabs tabs = new BSACreativeTabs("bsaTab");
+
+	public static Random rand = new Random();
 	
 	private BSAGuiHandler engGuiHandler = new BSAGuiHandler();
 
@@ -57,6 +61,7 @@ public class BSAMod {
 	public static Item screwItem;
 	public static Item engCircuitItem;
 	
+	public static Item blockReplacerHeadItem;
 	public static Item blockReplacerItem;
 
 	// *******************************************************************
