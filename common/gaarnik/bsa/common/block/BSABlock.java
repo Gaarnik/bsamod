@@ -24,7 +24,7 @@ public class BSABlock extends Block {
 
 		this.setBlockName(name);
 		this.setHardness(7.0f);
-		this.setResistance(15.0f);
+		this.setResistance(100.0f);
 		this.setStepSound(Block.soundMetalFootstep);
 
 		this.setCreativeTab(BSAMod.tabs);

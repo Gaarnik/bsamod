@@ -31,7 +31,7 @@ public class EngCircuitItem extends Item {
 		.setItemName("EngCircuitItem");
 
 		GameRegistry.registerItem(BSAMod.engCircuitItem, "EngCircuitItem");
-		LanguageRegistry.addName(BSAMod.engCircuitItem, "Eng. Circuit");
+		LanguageRegistry.addName(BSAMod.engCircuitItem, "Eng. Circuit");		
 	}
 
 	// *******************************************************************

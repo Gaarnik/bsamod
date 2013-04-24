@@ -39,7 +39,7 @@ public class StructureIronBlock extends BSABlock {
 		MinecraftForge.setBlockHarvestLevel(BSAMod.structureIronBlock, "pickaxe", 2);
 		
 		for(int i=0;i<2;i++) {
-			ItemStack stack = new ItemStack(BSAMod.structureIronBlock, 1, i);
+			ItemStack stack = new ItemStack(BSAMod.structureIronBlock, 4, i);
 			
 			ItemStack ironStack = new ItemStack(Item.ingotIron, 1);
 			ItemStack screwStack = new ItemStack(BSAMod.screwItem, 1);

@@ -39,7 +39,7 @@ public class GridIronBlock extends BSABlock {
 		MinecraftForge.setBlockHarvestLevel(BSAMod.gridIronBlock, "pickaxe", 2);
 		
 		for(int i=0;i<2;i++) {
-			ItemStack stack = new ItemStack(BSAMod.gridIronBlock, 1, i);
+			ItemStack stack = new ItemStack(BSAMod.gridIronBlock, 4, i);
 			
 			ItemStack ironStack = new ItemStack(Item.ingotIron, 1);
 			ItemStack screwStack = new ItemStack(BSAMod.screwItem, 1);

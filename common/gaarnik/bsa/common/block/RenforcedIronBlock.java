@@ -39,7 +39,7 @@ public class RenforcedIronBlock extends BSABlock {
 		MinecraftForge.setBlockHarvestLevel(BSAMod.renforcedIronBlock, "pickaxe", 2);
 		
 		for(int i=0;i<2;i++) {
-			ItemStack stack = new ItemStack(BSAMod.renforcedIronBlock, 1, i);
+			ItemStack stack = new ItemStack(BSAMod.renforcedIronBlock, 4, i);
 			
 			ItemStack ironStack = new ItemStack(Item.ingotIron, 1);
 			ItemStack screwStack = new ItemStack(BSAMod.screwItem, 1);

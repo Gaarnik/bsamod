@@ -1,5 +1,7 @@
 package gaarnik.bsa.common.block;
 
+import java.util.Random;
+
 import gaarnik.bsa.client.BSAClientProxy;
 import gaarnik.bsa.common.BSAMod;
 import net.minecraft.block.Block;
@@ -45,7 +47,7 @@ public class RenforcedStairsBlock extends BlockStairs {
 		GameRegistry.registerBlock(BSAMod.renforcedStairslock, "renforcedStairslock");
 		MinecraftForge.setBlockHarvestLevel(BSAMod.renforcedStairslock, "pickaxe", 2);
 		
-		ItemStack stack = new ItemStack(BSAMod.renforcedStairslock, 1);
+		ItemStack stack = new ItemStack(BSAMod.renforcedStairslock, 4);
 		
 		ItemStack ironStack = new ItemStack(Item.ingotIron, 1);
 		ItemStack screwStack = new ItemStack(BSAMod.screwItem, 1);
@@ -87,5 +89,8 @@ public class RenforcedStairsBlock extends BlockStairs {
 	public int getBlockTextureFromSideAndMetadata(int par1, int par2) {
 		return this.textureOffset;
 	}
+	
+	@Override
+	public int quantityDropped(Random rand) { return 4; }
 
 }
