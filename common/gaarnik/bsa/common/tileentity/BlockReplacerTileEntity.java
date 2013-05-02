@@ -96,6 +96,9 @@ public class BlockReplacerTileEntity extends TileEntity implements IInventory {
 	private void saveIntoBlockReplacerItemStach(EntityPlayer player) {
 		ItemStack currentStack = player.inventory.getCurrentItem();
 		
+		if(currentStack == null)
+			return;
+		
 		if(currentStack.itemID != BSAMod.blockReplacerItem.itemID)
 			return;
 		

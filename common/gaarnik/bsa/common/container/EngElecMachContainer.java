@@ -1,7 +1,6 @@
 package gaarnik.bsa.common.container;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import gaarnik.bsa.common.recipe.EngMachRecipe;
 import gaarnik.bsa.common.slot.EngMachSlot;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,6 +8,9 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class EngElecMachContainer extends Container {
 	// *******************************************************************
@@ -92,6 +94,49 @@ public class EngElecMachContainer extends Container {
 			break;
 		
 		}
+	}
+	
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer player, int position) {
+		ItemStack stack = null;
+		Slot sourceSlot = (Slot) this.inventorySlots.get(position);
+
+		if (sourceSlot != null && sourceSlot.getHasStack()) {
+			ItemStack sourceStack = sourceSlot.getStack();
+			stack = sourceStack.copy();
+
+			switch(position) {
+			//from slots ton inventory
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				if (!this.mergeItemStack(sourceStack, 0, 37, true))
+					return null;
+				break;
+
+			//from inventory to slots
+			default:
+				if (EngMachRecipe.smelting().getSmeltingResult(sourceStack) != null)
+					if (!this.mergeItemStack(sourceStack, 0, 1, false))
+						return null;
+				break;
+
+			}
+
+			if (sourceStack.stackSize == 0)
+				sourceSlot.putStack((ItemStack)null);
+			else
+				sourceSlot.onSlotChanged();
+
+			if (sourceStack.stackSize == stack.stackSize)
+				return null;
+
+			sourceSlot.onPickupFromSlot(player, sourceStack);
+		}
+
+		return stack;
 	}
 	
 	// *******************************************************************

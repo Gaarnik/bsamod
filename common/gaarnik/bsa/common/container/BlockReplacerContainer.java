@@ -1,9 +1,7 @@
 package gaarnik.bsa.common.container;
 
-import gaarnik.bsa.common.recipe.EngMachRecipe;
 import gaarnik.bsa.common.slot.BlockReplacerSlot;
 import gaarnik.bsa.common.tileentity.BlockReplacerTileEntity;
-import gaarnik.bsa.common.tileentity.EngMachTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -13,11 +11,11 @@ public class BlockReplacerContainer extends Container {
 	// *******************************************************************
 
 	// *******************************************************************
-	
+
 	// *******************************************************************
 	public BlockReplacerContainer(EntityPlayer player, BlockReplacerTileEntity entity) {
 		this.addSlotToContainer(new BlockReplacerSlot(entity, 0, 80, 36));
-		
+
 		int var3;
 
 		for (var3 = 0; var3 < 3; ++var3)
@@ -36,50 +34,35 @@ public class BlockReplacerContainer extends Container {
 
 	// *******************************************************************
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int par2) {
-		ItemStack var3 = null;
-		Slot var4 = (Slot) this.inventorySlots.get(par2);
+	public ItemStack transferStackInSlot(EntityPlayer player, int position) {
+		ItemStack stack = null;
+		Slot sourceSlot = (Slot) this.inventorySlots.get(position);
 
-		if (var4 != null && var4.getHasStack()) {
-			ItemStack var5 = var4.getStack();
-			var3 = var5.copy();
+		if (sourceSlot != null && sourceSlot.getHasStack()) {
+			ItemStack sourceStack = sourceSlot.getStack();
+			stack = sourceStack.copy();
 
-			if (par2 == 2) {
-				if (!this.mergeItemStack(var5, 3, 39, true))
-					return null;
-
-				var4.onSlotChange(var5, var3);
-			}
-			else if (par2 != 1 && par2 != 0) {
-				if (EngMachRecipe.smelting().getSmeltingResult(var5) != null)
-					if (!this.mergeItemStack(var5, 0, 1, false))
-						return null;
-				else if (EngMachTileEntity.isItemFuel(var5)) {
-					if (!this.mergeItemStack(var5, 1, 2, false))
-						return null;
-				}
-				else if (par2 >= 3 && par2 < 30) {
-					if (!this.mergeItemStack(var5, 30, 39, false))
-						return null;
-				}
-				else if (par2 >= 30 && par2 < 39 && !this.mergeItemStack(var5, 3, 30, false))
+			if(position == 0) { //from slot to inventory
+				if (!this.mergeItemStack(sourceStack, 0, 37, true))
 					return null;
 			}
-			else if (!this.mergeItemStack(var5, 3, 39, false))
-				return null;
+			else { //from inventory to slot
+				if (!this.mergeItemStack(sourceStack, 0, 1, false))
+					return null;
+			}
 
-			if (var5.stackSize == 0)
-				var4.putStack((ItemStack)null);
+			if (sourceStack.stackSize == 0)
+				sourceSlot.putStack((ItemStack)null);
 			else
-				var4.onSlotChanged();
+				sourceSlot.onSlotChanged();
 
-			if (var5.stackSize == var3.stackSize)
+			if (sourceStack.stackSize == stack.stackSize)
 				return null;
 
-			var4.onPickupFromSlot(player, var5);
+			sourceSlot.onPickupFromSlot(player, sourceStack);
 		}
 
-		return var3;
+		return stack;
 	}
 
 	// *******************************************************************
