@@ -13,8 +13,9 @@ public class BSAItems {
 		ScrewItem.registry();
 		EngCircuitItem.registry();
 		
-		BlockReplacerHeadItem.registry();
-		BlockReplacerItem.registry();
+		//removed in 0.2
+		//BlockReplacerHeadItem.registry();
+		//BlockReplacerItem.registry();
 	}
 
 }

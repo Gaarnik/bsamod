@@ -1,11 +1,12 @@
 package gaarnik.bsa.common;
 
-import java.util.Random;
-
 import gaarnik.bsa.common.block.BSABlocks;
 import gaarnik.bsa.common.item.BSAItems;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 import gaarnik.bsa.common.tileentity.EngMachTileEntity;
+
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -74,6 +75,8 @@ public class BSAMod {
 	@Init
 	public void load(FMLInitializationEvent event) {
 		proxy.registerTextures();
+		proxy.registerClientTickHandler();
+		proxy.registerDrawBlockHighlightEvent();
 		
 		LanguageRegistry.instance().addStringLocalization("itemGroup.bsaTab", "en_US", "BSA Mod");
 		

@@ -6,17 +6,12 @@ import gaarnik.bsa.common.BSAMod;
 import gaarnik.bsa.common.tileentity.BlockReplacerTileEntity;
 import ic2.api.ElectricItem;
 import ic2.api.IElectricItem;
-
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockReplacerItem extends Item implements IElectricItem {
 	// *******************************************************************
@@ -25,7 +20,6 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 	private static final int ENERGY_PER_USE = 100;
 
 	// *******************************************************************
-	private int stored;
 
 	// *******************************************************************
 	public BlockReplacerItem(int id) {
@@ -33,7 +27,8 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 
 		this.setIconIndex(3);
 		this.setItemName("BlockReplacerItem");
-		this.setMaxDamage(MAX_CHARGE + 1);
+		
+		this.setMaxDamage(101);
 
 		this.setCreativeTab(BSAMod.tabs);
 	}
@@ -48,17 +43,26 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		this.displayGUI(world, player);
-
 		return stack;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	/*@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List info, boolean par4) {
-		info.add(this.stored + " / " + MAX_CHARGE);
-	}
-
+		int stored = BSAMod.proxy.getItemEnergyStored(stack);
+		
+		info.add(stored + " / " + MAX_CHARGE);
+	}*/
+	
+	public void damage(ItemStack itemstack, int i, EntityPlayer entityplayer) {
+        ElectricItem.use(itemstack, ENERGY_PER_USE * i, entityplayer);
+    }
+	
+	public boolean canTakeDamage(ItemStack itemstack, int i) {
+        return true;
+    }
+	
 	// *******************************************************************
 	@Override
 	public boolean canProvideEnergy() { return false; }
@@ -92,8 +96,8 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 		if(ElectricItem.canUse(stack, ENERGY_PER_USE) == false)
 			return;
 
-		ElectricItem.use(stack, ENERGY_PER_USE, player);
-		this.stored = ElectricItem.discharge(stack, ENERGY_PER_USE, 1, true, false);
+		if(!world.isRemote)
+			this.damage(stack, 1, player);
 
 		if(targetStack == null)
 			return;
@@ -142,5 +146,5 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 
 	@Override
 	public boolean isRepairable() { return false; }
-
+	
 }
