@@ -82,18 +82,24 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, ISi
 
 	@Override
 	public void invalidate() {
-		super.invalidate();
-
 		if (this.addedToNetwork) {
-			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-			this.addedToNetwork = false;
-		}
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+            this.addedToNetwork = false;
+        }
+		
+		super.invalidate();
 	}
 
 	@Override
 	public int injectEnergy(Direction directionFrom, int amount) {
-		//TODO explode
 		if(amount > MAX_INPUT) {
+			if (!BSAMod.explodeMachineAt(worldObj, xCoord, yCoord, zCoord)) {
+        		worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2.0F, true);
+        		//remove machine block (too resistant for explosion)
+        		worldObj.setBlock(xCoord, yCoord, zCoord, 0);
+			}
+			
+			invalidate();
 			return 0;
 		}
 

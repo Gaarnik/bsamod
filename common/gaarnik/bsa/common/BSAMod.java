@@ -10,6 +10,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -98,4 +99,16 @@ public class BSAMod {
 	public void serverStarting(FMLServerStartingEvent event) {
 		
 	}
+
+	// *******************************************************************
+	public static boolean explodeMachineAt(World world, int x, int y, int z) {
+		try {
+			Class<?> mainIC2Class = Class.forName("IC2");
+			mainIC2Class.getMethod("explodeMachineAt", World.class, Integer.TYPE, Integer.TYPE, Integer.TYPE).invoke(null, world, x, y, z);
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
+    }
 }
