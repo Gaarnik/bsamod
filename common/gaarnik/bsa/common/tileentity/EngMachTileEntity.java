@@ -274,8 +274,7 @@ public class EngMachTileEntity extends TileEntity implements IInventory, ISidedI
 
 	public static boolean isItemFuel(ItemStack par0ItemStack) { return getItemBurnTime(par0ItemStack) > 0; }
 
-	public boolean isUseableByPlayer(EntityPlayer player)
-	{
+	public boolean isUseableByPlayer(EntityPlayer player) {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : player.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
 	}
 

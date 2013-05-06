@@ -3,6 +3,7 @@ package gaarnik.bsa.common.tileentity;
 import gaarnik.bsa.common.BSAMod;
 import gaarnik.bsa.common.recipe.EngMachRecipe;
 import ic2.api.Direction;
+import ic2.api.IWrenchable;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.network.INetworkDataProvider;
@@ -22,7 +23,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 import net.minecraftforge.common.MinecraftForge;
 
-public class EngElecMachTileEntity extends TileEntity implements IInventory, ISidedInventory, IEnergySink, INetworkDataProvider, INetworkTileEntityEventListener {
+public class EngElecMachTileEntity extends TileEntity implements IInventory, ISidedInventory, IEnergySink, IWrenchable, INetworkDataProvider, INetworkTileEntityEventListener {
 	// *******************************************************************
 	public static final int MAX_ENERGY = 500;
 	public static final int MAX_PROCESS_TICKS = 50;
@@ -83,10 +84,10 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, ISi
 	@Override
 	public void invalidate() {
 		if (this.addedToNetwork) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-            this.addedToNetwork = false;
-        }
-		
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			this.addedToNetwork = false;
+		}
+
 		super.invalidate();
 	}
 
@@ -94,11 +95,11 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, ISi
 	public int injectEnergy(Direction directionFrom, int amount) {
 		if(amount > MAX_INPUT) {
 			if (!BSAMod.explodeMachineAt(worldObj, xCoord, yCoord, zCoord)) {
-        		worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2.0F, true);
-        		//remove machine block (too resistant for explosion)
-        		worldObj.setBlock(xCoord, yCoord, zCoord, 0);
+				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2.0F, true);
+				//remove machine block (too resistant for explosion)
+				worldObj.setBlock(xCoord, yCoord, zCoord, 0);
 			}
-			
+
 			invalidate();
 			return 0;
 		}
@@ -194,17 +195,17 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, ISi
 
 	@Override
 	public void closeChest() {}
-	
+
 	public boolean isActive() {
 		return this.active;
 	}
-	
+
 	public void setActive(boolean active) {
 		this.active = active;
-		
+
 		if(this.active != this.prevActive)
 			NetworkHelper.updateTileEntityField(this, "active");
-		
+
 		this.prevActive = active;
 	}
 
@@ -215,6 +216,29 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, ISi
 	@Override
 	public List<String> getNetworkedFields() {
 		return networkedFileds;
+	}
+
+	// *******************************************************************
+	@Override
+	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) { return false; }
+
+	@Override
+	public short getFacing() { return 0; }
+
+	@Override
+	public void setFacing(short facing) {}
+
+	@Override
+	public boolean wrenchCanRemove(EntityPlayer player) {
+		return player.isSneaking();
+	}
+
+	@Override
+	public float getWrenchDropRate() { return 0.9f;	}
+
+	@Override
+	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
+		return new ItemStack(BSAMod.engElecMachBlock, 1);
 	}
 
 	// *******************************************************************
@@ -302,7 +326,7 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, ISi
 
 	public int getProcessTicks() { return this.processTicks; }
 	public void setProcessTicks(int ticks) { this.processTicks = ticks; }
-	
+
 	public int getStartInventorySide(ForgeDirection side) { return 0; }
 
 	public int getSizeInventorySide(ForgeDirection side) { return 1; }

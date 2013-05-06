@@ -1,5 +1,7 @@
 package gaarnik.bsa.common.block;
 
+import java.util.Random;
+
 import gaarnik.bsa.common.BSAGuiHandler;
 import gaarnik.bsa.common.BSAMod;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
@@ -66,5 +68,15 @@ public class EngElecMachBlock extends BSAMachineBlock {
 	// *******************************************************************
 	@Override
 	public TileEntity createNewTileEntity(World world) { return new EngElecMachTileEntity(); }
+	
+	@Override
+	public int idDropped(int par1, Random rand, int par3) {
+		int random = rand.nextInt(100);
+		
+		if(random >= 90)
+			return BSAMod.engCircuitItem.itemID;
+		else
+			return this.blockID;
+	}
 
 }
