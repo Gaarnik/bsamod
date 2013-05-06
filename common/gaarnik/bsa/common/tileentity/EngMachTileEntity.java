@@ -15,11 +15,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.ISidedInventory;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EngMachTileEntity extends TileEntity implements IInventory {
+public class EngMachTileEntity extends TileEntity implements IInventory, ISidedInventory {
 	// *******************************************************************
 	private static final int COOK_TIME = 200;
 
@@ -86,9 +87,9 @@ public class EngMachTileEntity extends TileEntity implements IInventory {
 			for(int slot=2;slot<=5;slot++) {
 				if(this.isSlotFull(slot, stack) == true)
 					continue;
-				
+
 				boolean smelted = false;
-				
+
 				if (this.engMachItemStacks[slot] == null) {
 					this.engMachItemStacks[slot] = stack.copy();
 					smelted = true;
@@ -97,13 +98,13 @@ public class EngMachTileEntity extends TileEntity implements IInventory {
 					engMachItemStacks[slot].stackSize += stack.stackSize;
 					smelted = true;
 				}
-				
+
 				if(smelted == true) {
 					--this.engMachItemStacks[0].stackSize;
 
 					if (this.engMachItemStacks[0].stackSize <= 0)
 						this.engMachItemStacks[0] = null;
-					
+
 					return;
 				}
 			}
@@ -280,9 +281,8 @@ public class EngMachTileEntity extends TileEntity implements IInventory {
 
 	public int getStartInventorySide(ForgeDirection side) {
 		if (side == ForgeDirection.DOWN) return 1;
-		if (side == ForgeDirection.UP) return 0;
-
-		return 2;
+		
+		return 0;
 	}
 
 	public int getSizeInventorySide(ForgeDirection side) { return 1; }
