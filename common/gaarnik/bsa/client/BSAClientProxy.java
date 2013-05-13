@@ -2,6 +2,7 @@ package gaarnik.bsa.client;
 
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import gaarnik.bsa.client.hud.EngHelmetHUD;
 import gaarnik.bsa.common.BSACommonProxy;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 import ic2.api.energy.event.EnergyTileLoadEvent;

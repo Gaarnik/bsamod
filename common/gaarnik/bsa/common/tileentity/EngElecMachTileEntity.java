@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -23,7 +22,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 import net.minecraftforge.common.MinecraftForge;
 
-public class EngElecMachTileEntity extends TileEntity implements IInventory, ISidedInventory, IEnergySink, IWrenchable, INetworkDataProvider, INetworkTileEntityEventListener {
+public class EngElecMachTileEntity extends TileEntity implements ISidedInventory, IEnergySink, IWrenchable, INetworkDataProvider, INetworkTileEntityEventListener {
 	// *******************************************************************
 	public static final int MAX_ENERGY = 500;
 	public static final int MAX_PROCESS_TICKS = 50;
@@ -327,7 +326,12 @@ public class EngElecMachTileEntity extends TileEntity implements IInventory, ISi
 	public int getProcessTicks() { return this.processTicks; }
 	public void setProcessTicks(int ticks) { this.processTicks = ticks; }
 
-	public int getStartInventorySide(ForgeDirection side) { return 0; }
+	public int getStartInventorySide(ForgeDirection side) {
+		if(side == ForgeDirection.EAST)
+			return 4;
+		
+		return 0;
+	}
 
 	public int getSizeInventorySide(ForgeDirection side) { return 1; }
 

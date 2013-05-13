@@ -1,5 +1,7 @@
 package gaarnik.bsa.client;
 
+import gaarnik.bsa.client.hud.EngHelmetHUD;
+
 import java.util.EnumSet;
 
 import net.minecraft.client.Minecraft;
