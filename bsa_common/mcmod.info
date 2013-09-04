@@ -1,0 +1,21 @@
+[
+{
+  "modid": "BSAMod",
+  "name": "BSA Mod",
+  "description": "The official BSA Mod from BSA serie",
+  "version": "@VERSION@",
+  "url": "",
+  "updateUrl": "",
+  "authorList": [
+    "Gaarnik",
+    "Asceliopos"
+  ],
+  "credits": "By Gaarnik, textures mades by Asceliopos",
+  "logoFile": "/assets/bsa/logo.png",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  ]
+}
+]
