@@ -5,7 +5,6 @@ import gaarnik.bsa.common.item.BSAItems;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
@@ -38,9 +37,6 @@ public class BSAMod {
 	public static Random rand = new Random();
 	
 	private BSAGuiHandler engGuiHandler = new BSAGuiHandler();
-
-	// *******************************************************************
-	public static Block engElecMachBlock;
 
 	// *******************************************************************
 

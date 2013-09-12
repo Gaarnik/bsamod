@@ -26,6 +26,7 @@ public class BSABlocks {
 	public static Block renforcedDarkStairslock;
 	
 	public static Block engMachBlock;
+	public static Block engMachActiveBlock;
 	
 	// *******************************************************************
 	public static void registry() {
@@ -34,7 +35,7 @@ public class BSABlocks {
 		structureIronBlock = StructureIronBlock.registry();
 		RenforcedStairsBlock.registry();
 		
-		engMachBlock = EngMachBlock.registry();
+		EngMachBlock.registry();
 		
 		//EngElecMachBlock.registry();*/
 	}

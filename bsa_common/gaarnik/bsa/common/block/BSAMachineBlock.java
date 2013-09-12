@@ -4,62 +4,90 @@ import gaarnik.bsa.common.BSAMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.MinecraftForge;
 
 public abstract class BSAMachineBlock extends BlockContainer {
 	// *******************************************************************
 
 	// *******************************************************************
-	private final boolean isActive;
+	protected boolean active;
 
 	protected static boolean keepEngMachInventory;
 	
 	// *******************************************************************
-	public BSAMachineBlock(int id, String name, boolean isActive) {
+	public BSAMachineBlock(int id, String name) {
 		super(id, Material.rock);
 
 		keepEngMachInventory = false;
 		
-		this.isActive = isActive;
+		this.active = false;
 		
 		this.setUnlocalizedName(name);
 		this.setHardness(7.0f);
 		this.setResistance(15.0f);
 		this.setStepSound(Block.soundAnvilFootstep);
+
+		MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 2);
 		
 		this.setCreativeTab(BSAMod.tabs);
 	}
 
 	// *******************************************************************
+	@Override
 	public void onBlockAdded(World world, int x, int y, int z) {
-		super.onBlockAdded(world, x, y, x);
-		this.setDefaultDirection(world, x, y, z);
+		if (!world.isRemote) {
+			int l = world.getBlockId(x, y, z - 1);
+			int i1 = world.getBlockId(x, y, z + 1);
+			int j1 = world.getBlockId(x - 1, y, z);
+			int k1 = world.getBlockId(x + 1, y, z);
+			byte b0 = 3;
+
+			if (Block.opaqueCubeLookup[l] && !Block.opaqueCubeLookup[i1])
+                b0 = 3;
+
+            if (Block.opaqueCubeLookup[i1] && !Block.opaqueCubeLookup[l])
+                b0 = 2;
+
+            if (Block.opaqueCubeLookup[j1] && !Block.opaqueCubeLookup[k1])
+                b0 = 5;
+
+            if (Block.opaqueCubeLookup[k1] && !Block.opaqueCubeLookup[j1])
+                b0 = 4;
+
+			world.setBlockMetadataWithNotify(x, y, z, b0, 2);
+		}
 	}
-	
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving entity) {
-        int var6 = MathHelper.floor_double((double)(entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 
-        if (var6 == 0)
-        	world.setBlockMetadataWithNotify(x, y, z, 2, 0);
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
+		int orientation = MathHelper.floor_double((double)(entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 
-        if (var6 == 1)
-        	world.setBlockMetadataWithNotify(x, y, z, 5, 0);
+		switch(orientation) {
 
-        if (var6 == 2)
-        	world.setBlockMetadataWithNotify(x, y, z, 3, 0);
+		case 0:
+			world.setBlockMetadataWithNotify(x, y, z, 2, 2);
+			break;
 
-        if (var6 == 3)
-        	world.setBlockMetadataWithNotify(x, y, z, 4, 0);
-    }
+		case 1:
+			world.setBlockMetadataWithNotify(x, y, z, 5, 2);
+			break;
+
+		case 2:
+			world.setBlockMetadataWithNotify(x, y, z, 3, 2);
+			break;
+
+		case 3:
+			world.setBlockMetadataWithNotify(x, y, z, 4, 2);
+			break;
+
+		}
+	}
 	
 	public void breakBlock(World world, int par2, int par3, int par4, int par5, int par6) {
         if (!keepEngMachInventory) {
@@ -103,45 +131,6 @@ public abstract class BSAMachineBlock extends BlockContainer {
 	// *******************************************************************
 	
 	// *******************************************************************
-	@SideOnly(Side.CLIENT)
-	public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5) {
-		/*final int texture = this.blockIndexInTexture;
-		
-		if (par5 == 1)
-			return texture + 3;
-		else if (par5 == 0)
-			return texture + 3;
-		else {
-			int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-			return par5 != var6 ? texture + 2 : (this.isActive ? texture + 1 : texture);
-		}*/
-		return null;
-	}
-
-	// *******************************************************************
-	private void setDefaultDirection(World world, int x, int y, int z) {
-		if (!world.isRemote) {
-			int var5 = world.getBlockId(x, y, z - 1);
-			int var6 = world.getBlockId(x, y, z + 1);
-			int var7 = world.getBlockId(x - 1, y, z);
-			int var8 = world.getBlockId(x + 1, y, z);
-			byte var9 = 3;
-
-			if (Block.opaqueCubeLookup[var5] && !Block.opaqueCubeLookup[var6])
-				var9 = 3;
-
-			if (Block.opaqueCubeLookup[var6] && !Block.opaqueCubeLookup[var5])
-				var9 = 2;
-
-			if (Block.opaqueCubeLookup[var7] && !Block.opaqueCubeLookup[var8])
-				var9 = 5;
-
-			if (Block.opaqueCubeLookup[var8] && !Block.opaqueCubeLookup[var7])
-				var9 = 4;
-
-			world.setBlockMetadataWithNotify(x, y, z, var9, 0);
-		}
-	}
 
 	// *******************************************************************
 
