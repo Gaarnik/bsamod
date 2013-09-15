@@ -1,7 +1,10 @@
 package gaarnik.bsa.common;
 
+import gaarnik.bsa.client.gui.EngElecMachGui;
 import gaarnik.bsa.client.gui.EngMachGui;
+import gaarnik.bsa.common.container.EngElecMachContainer;
 import gaarnik.bsa.common.container.EngMachContainer;
+import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 import gaarnik.bsa.common.tileentity.EngMachTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -25,11 +28,11 @@ public class BSAGuiHandler implements IGuiHandler {
 			if(tileEntity instanceof EngMachTileEntity)
 				return new EngMachContainer(player.inventory, (EngMachTileEntity) tileEntity);
 
-		/*case GUI_ELECTRICAL_ENG_MACH:
+		case GUI_ELECTRICAL_ENG_MACH:
 			if(tileEntity instanceof EngElecMachTileEntity)
 				return new EngElecMachContainer(player.inventory, (EngElecMachTileEntity) tileEntity);
 			
-		case GUI_BLOCK_REPLACER:
+		/*case GUI_BLOCK_REPLACER:
 			BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
 			return new BlockReplacerContainer(player, entity);*/
 			
@@ -49,11 +52,11 @@ public class BSAGuiHandler implements IGuiHandler {
 			if(tileEntity instanceof EngMachTileEntity)
 				return new EngMachGui(player.inventory, (EngMachTileEntity) tileEntity);
 
-		/*case GUI_ELECTRICAL_ENG_MACH:
+		case GUI_ELECTRICAL_ENG_MACH:
 			if(tileEntity instanceof EngElecMachTileEntity)
 				return new EngElecMachGui(player.inventory, (EngElecMachTileEntity) tileEntity);
 			
-		case GUI_BLOCK_REPLACER:
+		/*case GUI_BLOCK_REPLACER:
 			BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
 			return new BlockReplacerGui(player, entity);*/
 

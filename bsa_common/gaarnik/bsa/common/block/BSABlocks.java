@@ -28,6 +28,9 @@ public class BSABlocks {
 	public static Block engMachBlock;
 	public static Block engMachActiveBlock;
 	
+	public static Block engElecMachBlock;
+	public static Block engElecActiveMachBlock;
+	
 	// *******************************************************************
 	public static void registry() {
 		renforcedIronBlock = RenforcedIronBlock.registry();
@@ -37,7 +40,7 @@ public class BSABlocks {
 		
 		EngMachBlock.registry();
 		
-		//EngElecMachBlock.registry();*/
+		EngElecMachBlock.registry();
 	}
 
 }

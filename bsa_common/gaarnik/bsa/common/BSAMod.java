@@ -2,6 +2,8 @@ package gaarnik.bsa.common;
 
 import gaarnik.bsa.common.block.BSABlocks;
 import gaarnik.bsa.common.item.BSAItems;
+import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
+import gaarnik.bsa.common.tileentity.EngMachTileEntity;
 
 import java.util.Random;
 
@@ -18,6 +20,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(modid = "BSAMod")
@@ -39,8 +42,6 @@ public class BSAMod {
 	private BSAGuiHandler engGuiHandler = new BSAGuiHandler();
 
 	// *******************************************************************
-
-	// *******************************************************************
 	@EventHandler
 	public void preload(FMLPreInitializationEvent event) {
 		BSAMod.config = new Configuration(event.getSuggestedConfigurationFile());
@@ -58,8 +59,8 @@ public class BSAMod {
 		BSAItems.registry();
 		BSABlocks.registry();
 		
-		//GameRegistry.registerTileEntity(EngMachTileEntity.class, "EngMachBlock");
-		//GameRegistry.registerTileEntity(EngElecMachTileEntity.class, "EngElecMachBlock");
+		GameRegistry.registerTileEntity(EngMachTileEntity.class, "EngMachBlock");
+		GameRegistry.registerTileEntity(EngElecMachTileEntity.class, "EngElecMachBlock");
 		
 		NetworkRegistry.instance().registerGuiHandler(this, engGuiHandler);
 	}

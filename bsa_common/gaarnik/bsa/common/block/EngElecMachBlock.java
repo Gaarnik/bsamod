@@ -2,7 +2,11 @@ package gaarnik.bsa.common.block;
 
 import gaarnik.bsa.common.BSAGuiHandler;
 import gaarnik.bsa.common.BSAMod;
-import gaarnik.bsa.common.tileentity.EngMachTileEntity;
+import gaarnik.bsa.common.item.BSAItems;
+import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
+
+import java.util.Random;
+
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -15,12 +19,12 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class EngMachBlock extends BSAMachineBlock {
+public class EngElecMachBlock extends BSAMachineBlock {
 	// *******************************************************************
-	private static final String GAME_NAME = 			"Engineering Machine";
+	private static final String GAME_NAME = 			"Eng. Electrical Machine";
 
-	private static final String TEXTURE_FRONT = 		"eng_machine_front";
-	private static final String TEXTURE_FRONT_ACTIVE = 	"eng_machine_front_active";
+	private static final String TEXTURE_FRONT = 		"eng_elec_machine_front";
+	private static final String TEXTURE_FRONT_ACTIVE = 	"eng_elec_machine_front_active";
 	private static final String TEXTURE_SIDE = 			"eng_machine_side";
 	private static final String TEXTURE_OTHER = 		"eng_machine_other";
 
@@ -35,34 +39,35 @@ public class EngMachBlock extends BSAMachineBlock {
 	private Icon otherIcon;
 
 	// *******************************************************************
-	public EngMachBlock(int id, boolean active) {
-		super(id, "EngMachBlock");
+	public EngElecMachBlock(int id, boolean active) {
+		super(id, "EngElecMachBlock");
 
 		this.active = active;
 
-		//only register the inactive machine
 		if(active == false) {
-			GameRegistry.registerBlock(this, "engMachBlock");
+			GameRegistry.registerBlock(this, "engElecMachBlock");
 			LanguageRegistry.addName(this, GAME_NAME);
 
+			ItemStack screwStack = new ItemStack(BSAItems.screwItem, 1);
 			ItemStack ironStack = new ItemStack(Item.ingotIron, 1);
 			ItemStack redstoneStack = new ItemStack(Item.redstone, 1);
-			ItemStack goldStack = new ItemStack(Item.ingotGold, 1);
+			ItemStack circuitStack = new ItemStack(BSAItems.engCircuitItem, 1);
 
 			GameRegistry.addRecipe(new ItemStack(this, 1), new Object[] {
-				"XXX", "XYX", "XZX", 'X', ironStack, 'Y', redstoneStack, 'Z', goldStack
+				"AXA", "XYX", "XZX", 'X', ironStack, 'A', screwStack, 'Y', redstoneStack, 'Z', circuitStack
 			});
 		}
 	}
 
 	// *******************************************************************
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int idk, float what, float these, float are) {
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
 		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 
 		if (tileEntity == null || player.isSneaking())
 			return false;
 
-		player.openGui(BSAMod.instance, BSAGuiHandler.GUI_ENG_MACH, world, x, y, z);
+		player.openGui(BSAMod.instance, BSAGuiHandler.GUI_ELECTRICAL_ENG_MACH, world, x, y, z);
 
 		return true;
 	}
@@ -73,12 +78,12 @@ public class EngMachBlock extends BSAMachineBlock {
 		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 		keepEngMachInventory = true;
 
-		int id = isActive ? BSABlocks.engMachActiveBlock.blockID: BSABlocks.engMachBlock.blockID;
+		int id = isActive ? BSABlocks.engElecActiveMachBlock.blockID: BSABlocks.engElecMachBlock.blockID;
 		world.setBlock(x, y, z, id);
-		
+
 		keepEngMachInventory = false;
 
-        world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
+		world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
 
 		if (tileEntity != null) {
 			tileEntity.validate();
@@ -88,11 +93,11 @@ public class EngMachBlock extends BSAMachineBlock {
 
 	// *******************************************************************
 	public static void registry() {
-		int id = BSAMod.config.getBlock("EngMachBlock", BSABlocks.ENG_MACH_ID).getInt();
-		BSABlocks.engMachBlock = new EngMachBlock(id, false);
+		int id = BSAMod.config.getBlock("EngElecMachBlock", BSABlocks.ELEC_ENG_MACH_ID).getInt();
+		BSABlocks.engElecMachBlock = new EngElecMachBlock(id, false);
 
-		id = BSAMod.config.getBlock("EngMachActiveBlock", BSABlocks.ENG_MACH_ACTIVE_ID).getInt();
-		BSABlocks.engMachActiveBlock = new EngMachBlock(id, true);
+		id = BSAMod.config.getBlock("EngElecActiveMachBlock", BSABlocks.ELEC_ENG_MACH_ACTIVE_ID).getInt();
+		BSABlocks.engElecActiveMachBlock = new EngElecMachBlock(id, true);
 	}
 
 	// *******************************************************************
@@ -126,8 +131,16 @@ public class EngMachBlock extends BSAMachineBlock {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
-		return new EngMachTileEntity();
+	public TileEntity createNewTileEntity(World world) { return new EngElecMachTileEntity(); }
+
+	@Override
+	public int idDropped(int par1, Random rand, int par3) {
+		int random = rand.nextInt(100);
+
+		if(random >= 90)
+			return BSAItems.engCircuitItem.itemID;
+		else
+			return this.blockID;
 	}
 
 }
