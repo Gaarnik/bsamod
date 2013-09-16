@@ -100,7 +100,7 @@ public class EngMachContainer extends Container {
 			stack = sourceStack.copy();
 
 			switch(position) {
-			//from slots ton inventory
+			//from slots to inventory
 			case 0:
 			case 1:
 			case 2:

@@ -284,6 +284,65 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 	}
 
 	// *******************************************************************
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		int[] slots = null;
+		
+		switch(side) {
+
+		case 0:
+		case 3:
+			slots = new int[0];
+			break;
+
+		case 1:
+		case 2:
+		case 4:
+		case 5:
+			slots = new int[1];
+			slots[0] = 0;
+			break;
+		
+		}
+		
+		return slots;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int slot, ItemStack itemstack) {
+		switch(slot) {
+		
+		case 0:
+			if (EngMachRecipe.smelting().getSmeltingResult(itemstack) != null)
+				return true;
+			break;
+			
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		switch(slot) {
+		
+		case 0:
+			if(EngMachRecipe.smelting().getSmeltingResult(stack) != null)
+				return true;
+			break;
+		
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	// *******************************************************************
 	private boolean canProcess() {
 		if (this.stacks[0] == null)
 			return false;
@@ -353,33 +412,6 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 	public boolean isUseableByPlayer(EntityPlayer var1) { return true; }
 
 	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean canInsertItem(int i, ItemStack itemstack, int j) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean canExtractItem(int i, ItemStack itemstack, int j) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public boolean isInvNameLocalized() { return false; }
 
 }

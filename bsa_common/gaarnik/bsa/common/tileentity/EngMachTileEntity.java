@@ -13,7 +13,6 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -218,6 +217,100 @@ public class EngMachTileEntity extends TileEntity implements ISidedInventory {
 	}
 
 	// *******************************************************************
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		int[] slots = null;
+		
+		switch(side) {
+		
+		case 0:
+			slots = new int[5];
+			//fuel slot
+			slots[0] = 1;
+			//result slots
+			slots[1] = 2;
+			slots[2] = 3;
+			slots[3] = 4;
+			slots[4] = 5;
+			break;
+		
+		case 3:
+			slots = new int[0];
+			break;
+			
+		case 1:
+		case 2:
+		case 4:
+		case 5:
+			slots = new int[1];
+			slots[0] = 0;
+			break;
+		
+		}
+		
+		return slots;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int slot, ItemStack itemstack) {
+		switch(slot) {
+		
+		case 0:
+			if (EngMachRecipe.smelting().getSmeltingResult(itemstack) != null)
+				return true;
+			break;
+			
+		case 1:
+			if(EngMachTileEntity.isItemFuel(itemstack))
+				return true;
+			break;
+			
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		switch(side) {
+		
+		case 0:
+			if(slot == 1 && EngMachTileEntity.isItemFuel(stack))
+				return true;
+			break;
+			
+		case 1:
+		case 2:
+		case 4:
+		case 5:
+			if(slot == 0 && EngMachRecipe.smelting().getSmeltingResult(stack) != null)
+				return true;
+			break;
+			
+		case 3: // front
+			return false;
+		
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		/*switch(side) {
+		
+		case 0:
+			if(slot == 2 || slot == 3 || slot == 4 || slot == 5)
+				return true;
+			break;
+		
+		}
+		
+		return false;*/
+		return true;
+	}
+	
+	// *******************************************************************
 	private boolean canSmelt() {
 		if (this.engMachItemStacks[0] == null)
 			return false;
@@ -276,42 +369,7 @@ public class EngMachTileEntity extends TileEntity implements ISidedInventory {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : player.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
 	}
 
-	public int getSizeInventorySide(ForgeDirection side) { return 1; }
-
 	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		int[] slots = new int[1];
-		
-		if (side == 1)
-			slots[0] = 1;
-		else
-			slots[0] = 0;
-
-		return slots;
-	}
-
-	@Override
-	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public boolean isInvNameLocalized() { return false; }
 
 }
