@@ -297,17 +297,17 @@ public class EngMachTileEntity extends TileEntity implements ISidedInventory {
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		/*switch(side) {
+		switch(side) {
 		
 		case 0:
+		case 3:
 			if(slot == 2 || slot == 3 || slot == 4 || slot == 5)
 				return true;
 			break;
 		
 		}
 		
-		return false;*/
-		return true;
+		return false;
 	}
 	
 	// *******************************************************************
