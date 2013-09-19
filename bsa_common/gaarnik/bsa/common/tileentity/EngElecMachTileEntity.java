@@ -38,6 +38,8 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 	private int energyStored;
 
 	private int processTicks;
+	
+	private int metadata;
 
 	private boolean addedToNetwork;
 	private boolean active;
@@ -286,23 +288,29 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 	// *******************************************************************
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
+		this.metadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
 		int[] slots = null;
 		
-		switch(side) {
-
-		case 0:
-		case 3:
-			slots = new int[0];
-			break;
-
-		case 1:
-		case 2:
-		case 4:
-		case 5:
+		if(side == 0) { //bottom
+			slots = new int[4];
+			//output slots
+			slots[0] = 1;
+			slots[1] = 2;
+			slots[2] = 3;
+			slots[3] = 4;
+		}
+		else if(side == this.metadata) { //front
+			slots = new int[4];
+			//output slots
+			slots[0] = 1;
+			slots[1] = 2;
+			slots[2] = 3;
+			slots[3] = 4;
+		}
+		else {
 			slots = new int[1];
+			//input slot
 			slots[0] = 0;
-			break;
-		
 		}
 		
 		return slots;
@@ -324,21 +332,17 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		switch(slot) {
-		
-		case 0:
-			if(EngMachRecipe.smelting().getSmeltingResult(stack) != null)
-				return true;
-			break;
-		
-		}
+		if(side != this.metadata)
+			return EngMachRecipe.smelting().getSmeltingResult(stack) != null ? true: false;
 		
 		return false;
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		// TODO Auto-generated method stub
+		if(side != 1 && (slot == 1 || slot == 2 || slot == 3 || slot == 4))
+			return true;
+		
 		return false;
 	}
 

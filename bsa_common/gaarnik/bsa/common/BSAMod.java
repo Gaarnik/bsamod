@@ -47,7 +47,6 @@ public class BSAMod {
 
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
-		proxy.registerTextures();
 		proxy.registerClientTickHandler();
 		proxy.registerDrawBlockHighlightEvent();
 		

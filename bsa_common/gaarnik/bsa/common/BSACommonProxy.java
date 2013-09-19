@@ -6,10 +6,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 
 public class BSACommonProxy {
-
-	public void registerTextures() {
-        
-    }
 	
 	public void registerClientTickHandler() {
 		

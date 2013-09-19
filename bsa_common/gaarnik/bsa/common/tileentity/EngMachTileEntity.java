@@ -28,6 +28,8 @@ public class EngMachTileEntity extends TileEntity implements ISidedInventory {
 	public int engMachCookTime = 0;
 
 	public int currentItemBurnTime = 0;
+	
+	private int metadata;
 
 	// *******************************************************************
 	public void updateEntity() {
@@ -219,33 +221,31 @@ public class EngMachTileEntity extends TileEntity implements ISidedInventory {
 	// *******************************************************************
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
+		this.metadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
 		int[] slots = null;
 		
-		switch(side) {
-		
-		case 0:
+		if(side == 0) { //bottom
 			slots = new int[5];
 			//fuel slot
 			slots[0] = 1;
-			//result slots
+			//output slots
 			slots[1] = 2;
 			slots[2] = 3;
 			slots[3] = 4;
 			slots[4] = 5;
-			break;
-		
-		case 3:
-			slots = new int[0];
-			break;
-			
-		case 1:
-		case 2:
-		case 4:
-		case 5:
+		}
+		else if(side == this.metadata) { //front
+			slots = new int[4];
+			//output slots
+			slots[0] = 2;
+			slots[1] = 3;
+			slots[2] = 4;
+			slots[3] = 5;
+		}
+		else {
 			slots = new int[1];
+			//input slot
 			slots[0] = 0;
-			break;
-		
 		}
 		
 		return slots;
@@ -272,40 +272,18 @@ public class EngMachTileEntity extends TileEntity implements ISidedInventory {
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		switch(side) {
-		
-		case 0:
-			if(slot == 1 && EngMachTileEntity.isItemFuel(stack))
-				return true;
-			break;
-			
-		case 1:
-		case 2:
-		case 4:
-		case 5:
-			if(slot == 0 && EngMachRecipe.smelting().getSmeltingResult(stack) != null)
-				return true;
-			break;
-			
-		case 3: // front
-			return false;
-		
-		}
+		if(side == 0)
+			return EngMachTileEntity.isItemFuel(stack);
+		else if(side != this.metadata)
+			return EngMachRecipe.smelting().getSmeltingResult(stack) != null ? true: false;
 		
 		return false;
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		switch(side) {
-		
-		case 0:
-		case 3:
-			if(slot == 2 || slot == 3 || slot == 4 || slot == 5)
-				return true;
-			break;
-		
-		}
+		if(side != 1 && (slot == 2 || slot == 3 || slot == 4 || slot == 5))
+			return true;
 		
 		return false;
 	}
