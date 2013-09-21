@@ -1,9 +1,8 @@
 package gaarnik.bsa.common;
 
+import ic2.api.energy.tile.IEnergyTile;
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.nbt.NBTTagCompound;
-import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 
 public class BSACommonProxy {
 	
@@ -15,7 +14,7 @@ public class BSACommonProxy {
 		
 	}
 	
-	public void addMachineToIc2Network(EngElecMachTileEntity machine) {
+	public void addMachineToIc2Network(IEnergyTile machine) {
 		
 	}
 

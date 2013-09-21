@@ -58,6 +58,7 @@ public class BSAMod {
 		
 		GameRegistry.registerTileEntity(gaarnik.bsa.common.tileentity.EngMachTileEntity.class, "EngMachTileEntity");
 		GameRegistry.registerTileEntity(gaarnik.bsa.common.tileentity.EngElecMachTileEntity.class, "EngElecMachTileEntity");
+		GameRegistry.registerTileEntity(gaarnik.bsa.common.tileentity.ThermalGeneratorTileEntity.class, "ThermalGeneratorTileEntity");
 		
 		NetworkRegistry.instance().registerGuiHandler(this, engGuiHandler);
 	}
