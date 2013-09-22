@@ -57,7 +57,6 @@ public class EngElecMachGui extends GuiContainer {
 		this.fontRenderer.drawString(StatCollector.translateToLocal("Electrical Eng. Machine"), 30, 6, 4210752);
 		
 		String stored = this.tileEntity.getEnergyStored() + " / " + EngElecMachTileEntity.MAX_ENERGY + " EU";
-		
 		this.fontRenderer.drawString(StatCollector.translateToLocal(stored), 15, 60, 4210752);
 	}
 

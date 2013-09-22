@@ -2,10 +2,13 @@ package gaarnik.bsa.common;
 
 import gaarnik.bsa.client.gui.EngElecMachGui;
 import gaarnik.bsa.client.gui.EngMachGui;
+import gaarnik.bsa.client.gui.ThermalGeneratorGui;
 import gaarnik.bsa.common.container.EngElecMachContainer;
 import gaarnik.bsa.common.container.EngMachContainer;
+import gaarnik.bsa.common.container.ThermalGeneratorContainer;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 import gaarnik.bsa.common.tileentity.EngMachTileEntity;
+import gaarnik.bsa.common.tileentity.ThermalGeneratorTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -13,9 +16,10 @@ import cpw.mods.fml.common.network.IGuiHandler;
 
 public class BSAGuiHandler implements IGuiHandler {
 	// *******************************************************************
-	public static final int GUI_ENG_MACH = 1;
+	public static final int GUI_ENG_MACH 			= 1;
 	public static final int GUI_ELECTRICAL_ENG_MACH = 2;
-	public static final int GUI_BLOCK_REPLACER = 3;
+	public static final int GUI_THERMAL_GENERATOR 	= 3;
+	public static final int GUI_BLOCK_REPLACER 		= 4;
 	
 	// *******************************************************************
 	@Override
@@ -31,6 +35,10 @@ public class BSAGuiHandler implements IGuiHandler {
 		case GUI_ELECTRICAL_ENG_MACH:
 			if(tileEntity instanceof EngElecMachTileEntity)
 				return new EngElecMachContainer(player.inventory, (EngElecMachTileEntity) tileEntity);
+
+		case GUI_THERMAL_GENERATOR:
+			if(tileEntity instanceof ThermalGeneratorTileEntity)
+				return new ThermalGeneratorContainer(player.inventory, (ThermalGeneratorTileEntity) tileEntity);
 			
 		/*case GUI_BLOCK_REPLACER:
 			BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
@@ -55,6 +63,10 @@ public class BSAGuiHandler implements IGuiHandler {
 		case GUI_ELECTRICAL_ENG_MACH:
 			if(tileEntity instanceof EngElecMachTileEntity)
 				return new EngElecMachGui(player.inventory, (EngElecMachTileEntity) tileEntity);
+
+		case GUI_THERMAL_GENERATOR:
+			if(tileEntity instanceof ThermalGeneratorTileEntity)
+				return new ThermalGeneratorGui(player.inventory, (ThermalGeneratorTileEntity) tileEntity);
 			
 		/*case GUI_BLOCK_REPLACER:
 			BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);

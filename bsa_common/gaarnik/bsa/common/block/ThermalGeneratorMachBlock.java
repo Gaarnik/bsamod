@@ -1,17 +1,18 @@
 package gaarnik.bsa.common.block;
 
+import gaarnik.bsa.common.BSAGuiHandler;
 import gaarnik.bsa.common.BSAMod;
 import gaarnik.bsa.common.item.BSAItems;
 import gaarnik.bsa.common.tileentity.ThermalGeneratorTileEntity;
 import ic2.api.tile.IWrenchable;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPistonBase;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -21,7 +22,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ThermalGeneratorMachBlock extends BSAMachineBlock {
 	// *******************************************************************
-	private static final String GAME_NAME 			= "Thermal Generator";
+	public static final String GAME_NAME 			= "Thermal Generator";
 
 	private static final String TEXTURE_FRONT 			= "thermal_generator_front";
 	private static final String TEXTURE_OTHER 			= "thermal_generator_other";
@@ -103,46 +104,20 @@ public class ThermalGeneratorMachBlock extends BSAMachineBlock {
 
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
-		int metadata = 0;
-		
-		if (MathHelper.abs((float) entity.posX - (float) x) < 2.0F && MathHelper.abs((float) entity.posZ - (float) z) < 2.0F) {
-			double d0 = entity.posY + 1.82D - (double) entity.yOffset;
-
-			if (d0 - (double) y > 2.0D)
-				metadata = 1;
-
-			if ((double) y - d0 > 0.0D)
-				metadata = 0;
-		}
-		else {
-			int orientation = MathHelper.floor_double((double)(entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-
-			switch(orientation) {
-
-			case 0:
-				metadata = 2;
-				break;
-
-			case 1:
-				metadata = 5;
-				break;
-
-			case 2:
-				metadata = 3;
-				break;
-
-			case 3:
-				metadata = 4;
-				break;
-			}
-		}
-
-		world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
+		int metadata = BlockPistonBase.determineOrientation(world, x, y, z, entity);
+        world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int idk, float what, float these, float are) {
-		return false;
+		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+
+		if (tileEntity == null || player.isSneaking())
+			return false;
+
+		player.openGui(BSAMod.instance, BSAGuiHandler.GUI_THERMAL_GENERATOR, world, x, y, z);
+
+		return true;
 	}
 
 	// *******************************************************************
