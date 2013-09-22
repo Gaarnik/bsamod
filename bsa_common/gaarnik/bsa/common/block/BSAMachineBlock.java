@@ -1,6 +1,10 @@
 package gaarnik.bsa.common.block;
 
 import gaarnik.bsa.common.BSAMod;
+import gaarnik.bsa.common.item.BSAItems;
+
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -94,8 +98,10 @@ public abstract class BSAMachineBlock extends BlockContainer {
 		if (!keepEngMachInventory) {
 			TileEntity var7 = world.getBlockTileEntity(par2, par3, par4);
 
-			if(var7 != null && var7 instanceof IInventory == false)
+			if(var7 == null || var7 instanceof IInventory == false) {
+				super.breakBlock(world, par2, par3, par4, par5, par6);
 				return;
+			}
 			
 			IInventory inv = (IInventory) var7;
 
@@ -135,7 +141,14 @@ public abstract class BSAMachineBlock extends BlockContainer {
 	// *******************************************************************
 
 	// *******************************************************************
-
-	// *******************************************************************
+	@Override
+	public int idDropped(int par1, Random rand, int par3) {
+		int random = rand.nextInt(100);
+		
+		if(random <= 90)
+			return BSAItems.engCircuitItem.itemID;
+		else
+			return this.blockID;
+	}
 
 }

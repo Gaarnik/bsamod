@@ -4,9 +4,6 @@ import gaarnik.bsa.common.BSAGuiHandler;
 import gaarnik.bsa.common.BSAMod;
 import gaarnik.bsa.common.item.BSAItems;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
-
-import java.util.Random;
-
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -62,9 +59,12 @@ public class EngElecMachBlock extends BSAMachineBlock {
 	// *******************************************************************
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+		if(player.isSneaking())
+			return false;
+		
 		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 
-		if (tileEntity == null || player.isSneaking())
+		if (tileEntity == null)
 			return false;
 
 		player.openGui(BSAMod.instance, BSAGuiHandler.GUI_ELECTRICAL_ENG_MACH, world, x, y, z);
@@ -132,15 +132,5 @@ public class EngElecMachBlock extends BSAMachineBlock {
 
 	@Override
 	public TileEntity createNewTileEntity(World world) { return new EngElecMachTileEntity(); }
-
-	@Override
-	public int idDropped(int par1, Random rand, int par3) {
-		int random = rand.nextInt(100);
-
-		if(random >= 90)
-			return BSAItems.engCircuitItem.itemID;
-		else
-			return this.blockID;
-	}
 
 }

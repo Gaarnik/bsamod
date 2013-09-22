@@ -24,7 +24,6 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 	//TODO implement:
 	// - craft
 	// - textures
-	// - bug casse block
 	// - face de sortie
 	// - ajouter une gui
 	// - stocker de l'energie
@@ -142,7 +141,7 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 
 	@Override
 	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
-		return new ItemStack(BSABlocks.engElecMachBlock, 1);
+		return new ItemStack(BSABlocks.thermalGeneratorMachBlock, 1);
 	}
 
 	// *******************************************************************
