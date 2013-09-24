@@ -22,26 +22,26 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ThermalGeneratorMachBlock extends BSAMachineBlock {
 	// *******************************************************************
-	public static final String GAME_NAME 			= "Thermal Generator";
+	public static final String GAME_NAME 				= "Thermal Generator";
 
 	private static final String TEXTURE_FRONT 			= "thermal_generator_front";
+	private static final String TEXTURE_SIDE 			= "thermal_generator_side";
 	private static final String TEXTURE_OTHER 			= "thermal_generator_other";
-	private static final String TEXTURE_OTHER_ACTIVE 	= "thermal_generator_other_active";
 
 	// *******************************************************************
 	@SideOnly(Side.CLIENT)
 	private Icon frontIcon;
 	@SideOnly(Side.CLIENT)
-	private Icon otherIcon;
+	private Icon sideIcon;
 	@SideOnly(Side.CLIENT)
-	private Icon otherActiveIcon;
+	private Icon otherIcon;
 
 	// *******************************************************************
 	public ThermalGeneratorMachBlock(int id, boolean active) {
 		super(id, "ThermalGeneratorMachBlock");
 
 		this.active = active;
-
+	    
 		//only register the inactive machine
 		if(active == false) {
 			GameRegistry.registerBlock(this, "thermalGeneratorMachBlock");
@@ -105,47 +105,28 @@ public class ThermalGeneratorMachBlock extends BSAMachineBlock {
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
 		int metadata = BlockPistonBase.determineOrientation(world, x, y, z, entity);
-        world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
+		world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int idk, float what, float these, float are) {
 		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 
-		if (tileEntity == null || player.isSneaking())
+		if (tileEntity == null)
 			return false;
-
+		
+		if(player.isSneaking())
+			return true;
+		
 		player.openGui(BSAMod.instance, BSAGuiHandler.GUI_THERMAL_GENERATOR, world, x, y, z);
 
 		return true;
 	}
 
 	// *******************************************************************
-	public static void updateBlockState(boolean isActive, World world, int x, int y, int z) {
-		int metadata = world.getBlockMetadata(x, y, z);
-		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-		keepEngMachInventory = true;
-
-		int id = isActive ? BSABlocks.thermalGeneratorActiveMachBlock.blockID: BSABlocks.thermalGeneratorMachBlock.blockID;
-		world.setBlock(x, y, z, id);
-
-		keepEngMachInventory = false;
-
-		world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
-
-		if (tileEntity != null) {
-			tileEntity.validate();
-			world.setBlockTileEntity(x, y, z, tileEntity);
-		}
-	}
-
-	// *******************************************************************
 	public static void registry() {
 		int id = BSAMod.config.getBlock("ThermalGeneratorBlock", BSABlocks.THERMAL_GENERATOR_MACH_ID).getInt();
 		BSABlocks.thermalGeneratorMachBlock = new ThermalGeneratorMachBlock(id, false);
-
-		id = BSAMod.config.getBlock("ThermalGeneratorActiveBlock", BSABlocks.THERMAL_GENERATOR_MACH_ACTIVE_ID).getInt();
-		BSABlocks.thermalGeneratorActiveMachBlock = new ThermalGeneratorMachBlock(id, true);
 	}
 
 	// *******************************************************************
@@ -153,8 +134,8 @@ public class ThermalGeneratorMachBlock extends BSAMachineBlock {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister register) {
 		this.frontIcon = register.registerIcon("bsa:" + TEXTURE_FRONT);
+		this.sideIcon = register.registerIcon("bsa:" + TEXTURE_SIDE);
 		this.otherIcon = register.registerIcon("bsa:" + TEXTURE_OTHER);
-		this.otherActiveIcon = register.registerIcon("bsa:" + TEXTURE_OTHER_ACTIVE);
 	}
 
 	@Override
@@ -162,8 +143,10 @@ public class ThermalGeneratorMachBlock extends BSAMachineBlock {
 	public Icon getIcon(int side, int metadata) {
 		if(side == metadata)
 			return this.frontIcon;
+		else if(side == 0 || side == 1)
+			return this.otherIcon;
 		else
-			return this.active ? this.otherActiveIcon: this.otherIcon;
+			return this.sideIcon;
 	}
 
 	@Override

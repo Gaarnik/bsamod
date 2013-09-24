@@ -1,11 +1,12 @@
 package gaarnik.bsa.common.tileentity;
 
 import gaarnik.bsa.common.BSAMod;
+
 import gaarnik.bsa.common.block.BSABlocks;
 import gaarnik.bsa.common.block.EngElecMachBlock;
 import gaarnik.bsa.common.recipe.EngMachRecipe;
 import ic2.api.Direction;
-import ic2.api.IWrenchable;
+import ic2.api.tile.IWrenchable;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.network.INetworkDataProvider;

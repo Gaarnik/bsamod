@@ -18,7 +18,6 @@ public class BSABlocks {
 	public static final int ELEC_ENG_MACH_ACTIVE_ID = 1753;
 
 	public static final int THERMAL_GENERATOR_MACH_ID = 1754;
-	public static final int THERMAL_GENERATOR_MACH_ACTIVE_ID = 1755;
 
 	// *******************************************************************
 	public static Block renforcedIronBlock;
@@ -35,7 +34,6 @@ public class BSABlocks {
 	public static Block engElecActiveMachBlock;
 	
 	public static Block thermalGeneratorMachBlock;
-	public static Block thermalGeneratorActiveMachBlock;
 	
 	// *******************************************************************
 	public static void registry() {

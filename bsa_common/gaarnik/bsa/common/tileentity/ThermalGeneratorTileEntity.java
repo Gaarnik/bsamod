@@ -1,9 +1,10 @@
 package gaarnik.bsa.common.tileentity;
 
 import gaarnik.bsa.common.BSAMod;
+
 import gaarnik.bsa.common.block.BSABlocks;
 import ic2.api.Direction;
-import ic2.api.IWrenchable;
+import ic2.api.tile.IWrenchable;
 import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
@@ -83,19 +84,16 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 
 		if(this.worldObj.getBlockId(this.xCoord, this.yCoord, this.zCoord + 1) == Block.lavaStill.blockID)
 			this.sourcesCount++;
-		
+
 		if(this.sourcesCount > 0) {
 			this.stored += (float) (EU_PER_LAVA_SOURCE * this.sourcesCount);
 			if (this.stored > MAX_ENERGY)
 				this.stored = MAX_ENERGY;
 		}
-		
+
 		int output = (int) Math.min(this.getMaxEnergyOutput(), this.stored);
-		if (output > 0) {
+		if (output > 0)
 			this.stored = ((float)(this.stored + (sendEnergy(output) - output)));
-			//TODO fix when internal eu buffer implemented
-			//ThermalGeneratorMachBlock.updateBlockState(true, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
-		}
 	}
 
 	@Override
@@ -116,7 +114,7 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 		this.sourcesCount = tag.getInteger("sourcesCount");
 		this.stored = tag.getFloat("stored");
 	}
-	
+
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
@@ -131,10 +129,10 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 		int metadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
 
 		switch (metadata) {
-		
+
 		case 0:
 			return direction == Direction.YN;
-		
+
 		case 1:
 			return direction == Direction.YP;
 
@@ -149,6 +147,36 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 
 		case 5:
 			return direction == Direction.XP;
+
+		default:
+			return false;
+
+		}
+	}
+
+	@Override
+	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) {
+		int metadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
+
+		switch(metadata) {
+
+		case 0:
+			return direction != Direction.YN;
+
+		case 1:
+			return direction != Direction.YP;
+
+		case 2:
+			return direction != Direction.ZN;
+
+		case 3:
+			return direction != Direction.ZP;
+
+		case 4:
+			return direction != Direction.XN;
+
+		case 5:
+			return direction != Direction.XP;
 
 		default:
 			return false;
@@ -199,12 +227,10 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 	public void setFacing(short facing) {}
 
 	@Override
-	public boolean wrenchCanRemove(EntityPlayer player) {
-		return player.isSneaking();
-	}
+	public boolean wrenchCanRemove(EntityPlayer player) { return player.isSneaking(); }
 
 	@Override
-	public float getWrenchDropRate() { return 0.9f;	}
+	public float getWrenchDropRate() { return 1f; }
 
 	@Override
 	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
@@ -230,11 +256,8 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 	public int demandsEnergy() { return (int) (MAX_ENERGY - this.stored); }
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) { return true; }
-	
-	@Override
 	public boolean isAddedToEnergyNet() { return this.addedToNetwork; }
-	
+
 	public boolean isUseableByPlayer(EntityPlayer player) {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : player.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
 	}
@@ -254,7 +277,7 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 
 	public int getSourcesCount() { return this.sourcesCount; }
 	public void setSourcesCount(int count) { this.sourcesCount = count; }
-	
+
 	public int getEnergyStored() { return (int) this.stored; }
 	public void setEnergyStored(int stored) { this.stored = stored; }
 
