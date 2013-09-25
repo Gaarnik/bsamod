@@ -81,11 +81,13 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 			if(this.processTicks >= MAX_PROCESS_TICKS) {
 				this.smeltItem();
 				this.processTicks = 0;
-				
-				EngElecMachBlock.updateBlockState(false, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
 			}
-			else
-				EngElecMachBlock.updateBlockState(true, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+
+			EngElecMachBlock.updateBlockState(true, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+		}
+		else {
+			this.processTicks = 0;
+			EngElecMachBlock.updateBlockState(false, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
 		}
 	}
 

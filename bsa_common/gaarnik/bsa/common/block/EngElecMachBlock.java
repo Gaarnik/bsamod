@@ -74,11 +74,17 @@ public class EngElecMachBlock extends BSAMachineBlock {
 
 	// *******************************************************************
 	public static void updateBlockState(boolean isActive, World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		boolean currentActive = id == BSABlocks.engElecActiveMachBlock.blockID ? true: false;
+		
+		if(currentActive == isActive)
+			return;
+		
 		int metadata = world.getBlockMetadata(x, y, z);
 		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
 		keepEngMachInventory = true;
 
-		int id = isActive ? BSABlocks.engElecActiveMachBlock.blockID: BSABlocks.engElecMachBlock.blockID;
+		id = isActive ? BSABlocks.engElecActiveMachBlock.blockID: BSABlocks.engElecMachBlock.blockID;
 		world.setBlock(x, y, z, id);
 
 		keepEngMachInventory = false;
