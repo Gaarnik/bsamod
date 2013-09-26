@@ -1,9 +1,12 @@
 package gaarnik.bsa.common.item;
 
+import java.util.List;
+
 import gaarnik.bsa.common.BSAGuiHandler;
 import gaarnik.bsa.common.BSAMod;
-import ic2.api.ElectricItem;
-import ic2.api.IElectricItem;
+import gaarnik.bsa.common.tileentity.BlockReplacerTileEntity;
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -16,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockReplacerItem extends Item implements IElectricItem {
 	// *******************************************************************
-	private static final int MAX_CHARGE = 10000;
+	private static final int MAX_CHARGE 	= 10000;
 
 	private static final int ENERGY_PER_USE = 100;
 
@@ -29,8 +32,6 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 		this.setMaxDamage(101);
 		this.setCreativeTab(BSAMod.tabs);
 		this.setUnlocalizedName("blockReplacerItem");
-
-		//TODO replace iron by re-battery, if no item not create recipe
 
 		ItemStack stack = new ItemStack(this, 1);
 		ItemStack headStack = new ItemStack(BSAItems.blockReplacerHeadItem, 1);
@@ -60,17 +61,16 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 		return stack;
 	}
 
-	/*@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List info, boolean par4) {
-		int stored = BSAMod.proxy.getItemEnergyStored(stack);
-
-		info.add(stored + " / " + MAX_CHARGE);
-	}*/
+		String stored = ElectricItem.manager.getToolTip(stack);
+		info.add(stored);
+	}
 
 	public void damage(ItemStack itemstack, int i, EntityPlayer entityplayer) {
-		ElectricItem.use(itemstack, ENERGY_PER_USE * i, entityplayer);
+		ElectricItem.manager.use(itemstack, ENERGY_PER_USE * i, entityplayer);
 	}
 
 	public boolean canTakeDamage(ItemStack itemstack, int i) {
@@ -79,22 +79,26 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 
 	// *******************************************************************
 	@Override
-	public boolean canProvideEnergy() { return false; }
+	public boolean canProvideEnergy(ItemStack itemStack) { return true; }
 
 	@Override
-	public int getChargedItemId() { return BSAItems.blockReplacerItem.itemID; }
+	public int getChargedItemId(ItemStack itemStack) {
+		return BSAItems.blockReplacerItem.itemID;
+	}
 
 	@Override
-	public int getEmptyItemId() { return BSAItems.blockReplacerItem.itemID; }
+	public int getEmptyItemId(ItemStack itemStack) {
+		return BSAItems.blockReplacerItem.itemID;
+	}
 
 	@Override
-	public int getMaxCharge() { return MAX_CHARGE; }
+	public int getMaxCharge(ItemStack itemStack) { return MAX_CHARGE; }
 
 	@Override
-	public int getTier() { return 1; }
+	public int getTier(ItemStack itemStack) { return 1; }
 
 	@Override
-	public int getTransferLimit() { return 32; }
+	public int getTransferLimit(ItemStack itemStack) { return 32; }
 
 	// *******************************************************************
 	private void displayGUI(World world, EntityPlayer player) {
@@ -104,10 +108,10 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 	}
 
 	private void replaceBlock(ItemStack stack, EntityPlayer player, World world, int x, int y, int z) {
-		/*BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
+		BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
 		ItemStack targetStack = entity.getStackInSlot(0);
 
-		if(ElectricItem.canUse(stack, ENERGY_PER_USE) == false)
+		if(ElectricItem.manager.canUse(stack, ENERGY_PER_USE) == false)
 			return;
 
 		if(!world.isRemote)
@@ -129,13 +133,12 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 
 		world.setBlock(x, y, z, targetStack.itemID);
 		//world.setBlockMetadata(x, y, z, targetStack.getItemDamage());
-		world.setBlockMetadataWithNotify(x, y, z, targetStack.getItemDamage(), 0);*/
+		world.setBlockMetadataWithNotify(x, y, z, targetStack.getItemDamage(), 0);
 	}
 
 	// *******************************************************************
 	public static BlockReplacerItem registry() {
 		int id = BSAMod.config.getItem("BlockReplacerItem", BSAItems.BLOCK_REPLACER_ID).getInt();
-
 		return new BlockReplacerItem(id);
 	}
 

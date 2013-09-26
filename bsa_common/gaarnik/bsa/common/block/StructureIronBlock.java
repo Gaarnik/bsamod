@@ -77,5 +77,8 @@ public class StructureIronBlock extends BSABlock {
 	public Icon getIcon(int side, int metadata) {
 		return this.icons[metadata];
 	}
+	
+	@Override
+	public boolean hasSubBlock() { return true; }
 
 }

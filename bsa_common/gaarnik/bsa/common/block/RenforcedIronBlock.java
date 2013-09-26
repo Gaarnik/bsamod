@@ -34,12 +34,6 @@ public class RenforcedIronBlock extends BSABlock {
 	public RenforcedIronBlock(int id) {
 		super(id, "RenforcedIronBlock");
 
-		this.setCreativeTab(BSAMod.tabs);
-
-		this.setHardness(7.0f);
-		this.setResistance(100.0f);
-		this.setStepSound(Block.soundMetalFootstep);
-
 		GameRegistry.registerBlock(this, RenforcedIronItemBlock.class, "RenforcedIronBlock");
 
 		for(int i=0;i<RECEIPE_MIDDLE_BLOCKS.length;i++) {
@@ -64,7 +58,6 @@ public class RenforcedIronBlock extends BSABlock {
 	// *******************************************************************
 	public static RenforcedIronBlock registry() {
 		int id = BSAMod.config.getBlock("RenforcedIronBlock", BSABlocks.RENFORCED_IRON_ID).getInt();
-
 		return new RenforcedIronBlock(id);
 	}
 
@@ -83,5 +76,8 @@ public class RenforcedIronBlock extends BSABlock {
 	public Icon getIcon(int side, int metadata) {
 		return this.icons[metadata];
 	}
+	
+	@Override
+	public boolean hasSubBlock() { return true; }
 
 }

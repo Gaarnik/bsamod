@@ -22,8 +22,8 @@ public class BSAItems {
 		screwItem = ScrewItem.registry();
 		engCircuitItem = EngCircuitItem.registry();
 		
-		//blockReplacerHeadItem = BlockReplacerHeadItem.registry();
-		//blockReplacerItem = BlockReplacerItem.registry();
+		blockReplacerHeadItem = BlockReplacerHeadItem.registry();
+		blockReplacerItem = BlockReplacerItem.registry();
 	}
 
 }

@@ -1,11 +1,14 @@
 package gaarnik.bsa.common;
 
+import gaarnik.bsa.client.gui.BlockReplacerGui;
 import gaarnik.bsa.client.gui.EngElecMachGui;
 import gaarnik.bsa.client.gui.EngMachGui;
 import gaarnik.bsa.client.gui.ThermalGeneratorGui;
+import gaarnik.bsa.common.container.BlockReplacerContainer;
 import gaarnik.bsa.common.container.EngElecMachContainer;
 import gaarnik.bsa.common.container.EngMachContainer;
 import gaarnik.bsa.common.container.ThermalGeneratorContainer;
+import gaarnik.bsa.common.tileentity.BlockReplacerTileEntity;
 import gaarnik.bsa.common.tileentity.EngElecMachTileEntity;
 import gaarnik.bsa.common.tileentity.EngMachTileEntity;
 import gaarnik.bsa.common.tileentity.ThermalGeneratorTileEntity;
@@ -40,9 +43,9 @@ public class BSAGuiHandler implements IGuiHandler {
 			if(tileEntity instanceof ThermalGeneratorTileEntity)
 				return new ThermalGeneratorContainer(player.inventory, (ThermalGeneratorTileEntity) tileEntity);
 			
-		/*case GUI_BLOCK_REPLACER:
+		case GUI_BLOCK_REPLACER:
 			BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
-			return new BlockReplacerContainer(player, entity);*/
+			return new BlockReplacerContainer(player, entity);
 			
 		}
 		
@@ -68,9 +71,9 @@ public class BSAGuiHandler implements IGuiHandler {
 			if(tileEntity instanceof ThermalGeneratorTileEntity)
 				return new ThermalGeneratorGui(player.inventory, (ThermalGeneratorTileEntity) tileEntity);
 			
-		/*case GUI_BLOCK_REPLACER:
+		case GUI_BLOCK_REPLACER:
 			BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
-			return new BlockReplacerGui(player, entity);*/
+			return new BlockReplacerGui(player, entity);
 
 		}
 

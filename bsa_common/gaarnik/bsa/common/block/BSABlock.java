@@ -13,7 +13,7 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BSABlock extends Block {
+public abstract class BSABlock extends Block {
 	// *******************************************************************
 
 	// *******************************************************************
@@ -36,11 +36,17 @@ public class BSABlock extends Block {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(int par1, CreativeTabs tab, List subItems) {
+		if(this.hasSubBlock() == false) {
+			super.getSubBlocks(par1, tab, subItems);
+			return;
+		}
+		
 		for (int i=0;i<2;i++)
 			subItems.add(new ItemStack(this, 1, i));
 	}
 
 	// *******************************************************************
+	public abstract boolean hasSubBlock();
 
 	// *******************************************************************
 

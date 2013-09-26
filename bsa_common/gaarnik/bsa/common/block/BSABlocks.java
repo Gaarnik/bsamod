@@ -18,6 +18,10 @@ public class BSABlocks {
 	public static final int ELEC_ENG_MACH_ACTIVE_ID = 1753;
 
 	public static final int THERMAL_GENERATOR_MACH_ID = 1754;
+	
+	public static final int ELEVATOR_CONTROLLER_ID = 1755;
+	public static final int ELEVATOR_FLOOR_ID = 1756;
+	public static final int ELEVATOR_ID = 1757;
 
 	// *******************************************************************
 	public static Block renforcedIronBlock;
@@ -35,6 +39,10 @@ public class BSABlocks {
 	
 	public static Block thermalGeneratorMachBlock;
 	
+	public static Block elevatorControllerBlock;
+	public static Block elevatorFloorBlock;
+	public static Block elevatorBlock;
+	
 	// *******************************************************************
 	public static void registry() {
 		renforcedIronBlock = RenforcedIronBlock.registry();
@@ -47,6 +55,10 @@ public class BSABlocks {
 		EngElecMachBlock.registry();
 		
 		ThermalGeneratorMachBlock.registry();
+		
+		elevatorControllerBlock = ElevatorControllerBlock.registry();
+		elevatorFloorBlock = ElevatorFloorBlock.registry();
+		elevatorBlock = ElevatorBlock.registry();
 	}
 
 }
