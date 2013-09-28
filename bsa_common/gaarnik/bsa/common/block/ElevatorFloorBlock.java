@@ -1,6 +1,7 @@
 package gaarnik.bsa.common.block;
 
 import gaarnik.bsa.common.BSAMod;
+import gaarnik.bsa.common.tileentity.ElevatorControllerTileEntity;
 import gaarnik.bsa.common.tileentity.ElevatorFloorTileEntity;
 
 import java.util.Random;
@@ -33,7 +34,7 @@ public class ElevatorFloorBlock extends BlockContainer {
 		this.setStepSound(Block.soundMetalFootstep);
 
 		this.setCreativeTab(BSAMod.tabs);
-		
+
 		MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 2);
 
 		GameRegistry.registerBlock(this, "elevatorFloorBlock");
@@ -48,30 +49,45 @@ public class ElevatorFloorBlock extends BlockContainer {
 		if(powered)
 			world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate(world));
 	}
-	
+
 	@Override
 	public void updateTick(World world, int x, int y, int z, Random rand) {
 		if (world.isRemote)
 			return;
-		
+
 		ElevatorFloorTileEntity entity = (ElevatorFloorTileEntity) world.getBlockTileEntity(x, y, z);
-		
+
 		if(entity == null)
 			return;
-		
-		if(entity.isPowered() == false) {
-			entity.setPowered(true);
-			
-			//find controller tileentity
-			
-			//call elevator
-			
-		}
+
+		ElevatorControllerTileEntity controller = this.findElevatorController(world, x, y, z);
+
+		if(controller != null)
+			controller.callElevator();
 		else
-			entity.setPowered(false);
+			System.out.println("Can't find controller !");
 	}
 
 	// *******************************************************************
+	private ElevatorControllerTileEntity findElevatorController(World world, int x, int y, int z) {
+		for(int i=0;i<world.getHeight();i++) {
+			int id = world.getBlockId(x, i, z);
+
+			if(id == BSABlocks.elevatorControllerBlock.blockID) {
+				TileEntity entity = world.getBlockTileEntity(x, i, z);
+
+				if(entity == null)
+					return null;
+
+				if(entity instanceof ElevatorControllerTileEntity == false)
+					return null;
+
+				return (ElevatorControllerTileEntity) entity;
+			}
+		}
+
+		return null;
+	}
 
 	// *******************************************************************
 	public static ElevatorFloorBlock registry() {
