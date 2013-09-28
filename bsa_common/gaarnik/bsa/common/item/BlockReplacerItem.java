@@ -1,12 +1,15 @@
 package gaarnik.bsa.common.item;
 
-import java.util.List;
-
 import gaarnik.bsa.common.BSAGuiHandler;
 import gaarnik.bsa.common.BSAMod;
 import gaarnik.bsa.common.tileentity.BlockReplacerTileEntity;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
+
+import java.util.List;
+import java.util.Random;
+
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -24,10 +27,13 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 	private static final int ENERGY_PER_USE = 100;
 
 	// *******************************************************************
+	private Random rand;
 
 	// *******************************************************************
 	public BlockReplacerItem(int id) {
 		super(id);
+		
+		this.rand = new Random();
 
 		this.setMaxDamage(101);
 		this.setCreativeTab(BSAMod.tabs);
@@ -111,28 +117,43 @@ public class BlockReplacerItem extends Item implements IElectricItem {
 		BlockReplacerTileEntity entity = new BlockReplacerTileEntity(player);
 		ItemStack targetStack = entity.getStackInSlot(0);
 
-		if(ElectricItem.manager.canUse(stack, ENERGY_PER_USE) == false)
-			return;
-
-		if(!world.isRemote)
-			this.damage(stack, 1, player);
-
-		if(targetStack == null)
-			return;
-
-		if(entity.decrStackSize(0, 1) == null)
+		//can't replace complex blocks
+		if(world.getBlockTileEntity(x, y, z) != null)
 			return;
 
 		int blockId = world.getBlockId(x, y, z);
+		if(Block.blocksList[blockId] == null)
+			return;
+		//check if block is blacklisted
+		if(blockId == Block.bedrock.blockID)
+			return;
+		
+		//check if have a target block in tool inventory
+		if(targetStack == null)
+			return;
+
+		//use energy
+		if(ElectricItem.manager.canUse(stack, ENERGY_PER_USE) == false)
+			return;
+
+		this.damage(stack, 1, player);
+
+		//try to decrease inventory slot
+		if(entity.decrStackSize(0, 1) == null)
+			return;
+		
+		//replace block
 		int blockMetadata = world.getBlockMetadata(x, y, z);
-		ItemStack replacedStack = new ItemStack(blockId, 1, blockMetadata);
+		int dropped = Block.blocksList[blockId].idDropped(0, this.rand, 0);
+		int quantity = Block.blocksList[blockId].quantityDropped(blockMetadata, 0, this.rand);
+		
+		ItemStack replacedStack = new ItemStack(dropped, quantity, blockMetadata);
 
 		if(player.inventory.addItemStackToInventory(replacedStack) == false)
 			if(world.isRemote == false)
 				player.dropItem(blockId, 1);
 
 		world.setBlock(x, y, z, targetStack.itemID);
-		//world.setBlockMetadata(x, y, z, targetStack.getItemDamage());
 		world.setBlockMetadataWithNotify(x, y, z, targetStack.getItemDamage(), 0);
 	}
 
