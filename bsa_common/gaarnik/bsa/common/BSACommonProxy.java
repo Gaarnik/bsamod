@@ -10,6 +10,10 @@ public class BSACommonProxy {
 		
 	}
 	
+	public void registerRenderes() {
+		
+	}
+	
 	public void registerDrawBlockHighlightEvent() {
 		
 	}

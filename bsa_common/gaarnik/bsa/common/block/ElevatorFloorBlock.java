@@ -63,7 +63,7 @@ public class ElevatorFloorBlock extends BlockContainer {
 		ElevatorControllerTileEntity controller = this.findElevatorController(world, x, y, z);
 
 		if(controller != null)
-			controller.callElevator();
+			controller.callElevator(y);
 		else
 			System.out.println("Can't find controller !");
 	}

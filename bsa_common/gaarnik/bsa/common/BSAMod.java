@@ -1,6 +1,7 @@
 package gaarnik.bsa.common;
 
 import gaarnik.bsa.common.block.BSABlocks;
+import gaarnik.bsa.common.entity.BSAEntities;
 import gaarnik.bsa.common.item.BSAItems;
 
 import java.util.Random;
@@ -48,13 +49,11 @@ public class BSAMod {
 
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
-		proxy.registerClientTickHandler();
-		proxy.registerDrawBlockHighlightEvent();
-		
 		LanguageRegistry.instance().addStringLocalization("itemGroup.bsaTab", "en_US", "BSA Mod");
 		
 		BSAItems.registry();
 		BSABlocks.registry();
+		BSAEntities.registry();
 		
 		GameRegistry.registerTileEntity(gaarnik.bsa.common.tileentity.EngMachTileEntity.class, "EngMachTileEntity");
 		GameRegistry.registerTileEntity(gaarnik.bsa.common.tileentity.EngElecMachTileEntity.class, "EngElecMachTileEntity");
@@ -64,6 +63,10 @@ public class BSAMod {
 		GameRegistry.registerTileEntity(gaarnik.bsa.common.tileentity.ElevatorControllerTileEntity.class, "ElevatorControllerTileEntity");
 		
 		NetworkRegistry.instance().registerGuiHandler(this, engGuiHandler);
+
+		proxy.registerRenderes();
+		proxy.registerClientTickHandler();
+		proxy.registerDrawBlockHighlightEvent();
 	}
 
 	@EventHandler

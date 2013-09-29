@@ -2,6 +2,9 @@ package gaarnik.bsa.common.block;
 
 import gaarnik.bsa.common.BSAMod;
 import gaarnik.bsa.common.tileentity.ElevatorControllerTileEntity;
+
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -38,6 +41,26 @@ public class ElevatorControllerBlock extends BlockContainer {
 	}
 
 	// *******************************************************************
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
+		boolean powered = world.isBlockIndirectlyGettingPowered(x, y, z) || world.isBlockIndirectlyGettingPowered(x, y + 1, z);
+
+		if(powered)
+			world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate(world));
+	}
+	
+	@Override
+	public void updateTick(World world, int x, int y, int z, Random rand) {
+		if (world.isRemote)
+			return;
+
+		ElevatorControllerTileEntity controller = (ElevatorControllerTileEntity) world.getBlockTileEntity(x, y, z);
+
+		if(controller != null)
+			controller.callElevator(y);
+		else
+			System.out.println("Can't find controller !");
+	}
 
 	// *******************************************************************
 
@@ -53,6 +76,9 @@ public class ElevatorControllerBlock extends BlockContainer {
 	public void registerIcons(IconRegister register) {
 		this.blockIcon = register.registerIcon("bsa:elevator_controller");
 	}
+
+	@Override
+	public int tickRate(World world) { return 4; }
 	
 	@Override
 	public TileEntity createNewTileEntity(World world) { return new ElevatorControllerTileEntity(); }
