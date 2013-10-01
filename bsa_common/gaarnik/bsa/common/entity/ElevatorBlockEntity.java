@@ -16,14 +16,20 @@ public class ElevatorBlockEntity extends Entity {
 	private int targetY;
 	
 	private boolean up;
+	
+	private int tempCount = 0;
 
 	// *******************************************************************
+	public ElevatorBlockEntity(World world) {
+		super(world);
+	}
+	
 	public ElevatorBlockEntity(World world, int x, int y, int z, int targetY) {
 		super(world);
 		
 		this.preventEntitySpawning = true;
-		this.setSize(0.98F, 0.98F);
-		this.yOffset = this.height / 2.0F;
+		//this.setSize(0.98F, 0.98F);
+		//this.yOffset = this.height / 2.0F;
         this.setPosition(x, y, z);
         this.motionX = 0.0D;
         this.motionY = 0.0D;
@@ -50,7 +56,11 @@ public class ElevatorBlockEntity extends Entity {
 	
 	@Override
 	public void onUpdate() {
-		if(this.up) {
+		this.tempCount++;
+		
+		if(tempCount >= 50)
+			this.setDead();
+		/*if(this.up) {
 			this.currentY += MOVE_SPEED;
 			
 			if(this.currentY >= this.targetY)
@@ -61,7 +71,7 @@ public class ElevatorBlockEntity extends Entity {
 			
 			if(this.currentY <= this.targetY)
 				this.setDead();
-		}
+		}*/
 	}
 
 	// *******************************************************************

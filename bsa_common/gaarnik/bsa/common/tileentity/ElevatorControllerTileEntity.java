@@ -33,11 +33,12 @@ public class ElevatorControllerTileEntity extends TileEntity {
 				ElevatorBlockEntity entity = new ElevatorBlockEntity(this.worldObj, 
 						(int) coords.x, 
 						(int) coords.y, 
-						(int) coords.z, y);
+						(int) coords.z, 
+						y);
 				this.worldObj.spawnEntityInWorld(entity);
 
-				this.worldObj.setBlockToAir((int) coords.x, (int) coords.y, (int) coords.z);
-				this.worldObj.setBlock((int) coords.x, y, (int) coords.z, BSABlocks.elevatorBlock.blockID);
+				//this.worldObj.setBlockToAir((int) coords.x, (int) coords.y, (int) coords.z);
+				//this.worldObj.setBlock((int) coords.x, y, (int) coords.z, BSABlocks.elevatorBlock.blockID);
 			}
 		}
 		else
