@@ -1,5 +1,6 @@
 package gaarnik.bsa.common.entity;
 
+import gaarnik.bsa.common.block.BSABlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -56,22 +57,20 @@ public class ElevatorBlockEntity extends Entity {
 	
 	@Override
 	public void onUpdate() {
-		this.tempCount++;
-		
-		if(tempCount >= 50)
-			this.setDead();
-		/*if(this.up) {
-			this.currentY += MOVE_SPEED;
+		if(this.up) {
+			this.posY += MOVE_SPEED;
 			
-			if(this.currentY >= this.targetY)
+			if(this.posY >= this.targetY) {
+				this.worldObj.setBlock((int) this.posX, (int) this.posY, (int) this.posZ, BSABlocks.elevatorBlock.blockID);
 				this.setDead();
+			}
 		}
 		else {
-			this.currentY -= MOVE_SPEED;
+			this.posY -= MOVE_SPEED;
 			
-			if(this.currentY <= this.targetY)
+			if(this.posY <= this.targetY)
 				this.setDead();
-		}*/
+		}
 	}
 
 	// *******************************************************************
