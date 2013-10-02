@@ -26,8 +26,8 @@ public class ElevatorControllerTileEntity extends TileEntity {
 		if(elevators.size() != 0) {
 			System.out.println("Elevator Called: " + elevators.size() + " blocks moved");
 			
-			//for(int i=0;i<elevators.size();i++) {
-			for(int i=0;i<1;i++) {
+			for(int i=0;i<elevators.size();i++) {
+			//for(int i=0;i<1;i++) {
 				Vector3f coords = elevators.get(i);
 				
 				ElevatorBlockEntity entity = new ElevatorBlockEntity(this.worldObj, 
