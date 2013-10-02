@@ -19,6 +19,12 @@ public class ElevatorBlockEntity extends Entity {
 	// *******************************************************************
 	public ElevatorBlockEntity(World world) {
 		super(world);
+		
+		this.preventEntitySpawning = true;
+		this.setSize(0.98F, 0.98F);
+		this.motionX = 0.0D;
+		this.motionY = 0.0D;
+		this.motionZ = 0.0D;
 	}
 
 	public ElevatorBlockEntity(World world, int x, int y, int z, int targetY) {
@@ -26,7 +32,6 @@ public class ElevatorBlockEntity extends Entity {
 
 		this.preventEntitySpawning = true;
 		this.setSize(0.98F, 0.98F);
-		//this.yOffset = this.height / 2.0F;
 		this.setPosition(x, y, z);
 		this.motionX = 0.0D;
 		this.motionY = 0.0D;
@@ -59,7 +64,7 @@ public class ElevatorBlockEntity extends Entity {
 				this.motionY = - MOVE_SPEED;
 		}
 		
-		this.setPosition(this.posX, this.posY + this.motionY, this.posZ);
+		this.setPosition(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 		
 		if((this.posY >= this.targetY && this.up) || (this.posY <= this.targetY && this.up == false)) {
 			this.motionY = 0;
@@ -70,15 +75,17 @@ public class ElevatorBlockEntity extends Entity {
 
 	// *******************************************************************
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
-
+	protected void readEntityFromNBT(NBTTagCompound nbt) {
+		this.currentY = nbt.getFloat("currentY");
+		this.targetY = nbt.getInteger("targetY");
+		this.up = nbt.getBoolean("uo");
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		// TODO Auto-generated method stub
-
+	protected void writeEntityToNBT(NBTTagCompound nbt) {
+		nbt.setFloat("currentY", this.currentY);
+		nbt.setInteger("targetY", this.targetY);
+		nbt.setBoolean("up", this.up);
 	}
 
 	// *******************************************************************
