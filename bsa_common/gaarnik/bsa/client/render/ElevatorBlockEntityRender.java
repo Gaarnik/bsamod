@@ -23,7 +23,8 @@ public class ElevatorBlockEntityRender extends Render {
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
 		GL11.glPushMatrix();
-		GL11.glTranslatef((float) x + 0.5F, (float) y - 0.5F, (float) z + 0.5F);
+		//GL11.glTranslatef((float) x + 0.5F, (float) y - 0.5F, (float) z + 0.5F);
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		renderManager.renderEngine.func_110577_a(TEXTURE);
 		

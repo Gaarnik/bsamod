@@ -12,7 +12,10 @@ public class ElevatorBlockEntity extends Entity {
 
 	// *******************************************************************
 	private float currentY;
+	
+	private int targetX;
 	private int targetY;
+	private int targetZ;
 
 	private boolean up;
 
@@ -21,27 +24,34 @@ public class ElevatorBlockEntity extends Entity {
 		super(world);
 		
 		this.preventEntitySpawning = true;
-		this.setSize(0.98F, 0.98F);
 		this.motionX = 0.0D;
 		this.motionY = 0.0D;
 		this.motionZ = 0.0D;
 	}
 
-	public ElevatorBlockEntity(World world, int x, int y, int z, int targetY) {
+	public ElevatorBlockEntity(World world, float x, float y, float z, int targetY) {
 		super(world);
 
 		this.preventEntitySpawning = true;
 		this.setSize(0.98F, 0.98F);
-		this.setPosition(x, y, z);
 		this.motionX = 0.0D;
 		this.motionY = 0.0D;
 		this.motionZ = 0.0D;
+
+		this.targetX = (int) x;
+		this.targetY = targetY;
+		this.targetZ = (int) z;
+		
+		x += 0.5F;
+		y -= 0.5F;
+		z += 0.5F;
+
+		this.setPosition(x, y, z);
 		this.prevPosX = x;
 		this.prevPosY = y;
 		this.prevPosZ = z;
 
 		this.currentY = y;
-		this.targetY = targetY;
 
 		this.up = this.currentY < this.targetY ? true: false;
 	}
@@ -49,14 +59,16 @@ public class ElevatorBlockEntity extends Entity {
 	// *******************************************************************
 	@Override
 	protected void entityInit() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
 
+		this.prevPosX = this.posX;
+        this.prevPosY = this.posY;
+        this.prevPosZ = this.posZ;
+        
 		if(worldObj.isRemote == false) {
 			if(this.up)
 				this.motionY = MOVE_SPEED;
@@ -64,11 +76,13 @@ public class ElevatorBlockEntity extends Entity {
 				this.motionY = - MOVE_SPEED;
 		}
 		
-		this.setPosition(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+        this.moveEntity(this.motionX, this.motionY, this.motionZ);
 		
-		if((this.posY >= this.targetY && this.up) || (this.posY <= this.targetY && this.up == false)) {
+		if((this.posY >= ((float) this.targetY - 0.5f) && this.up) 
+				|| (this.posY <= ((float) this.targetY) && this.up == false)) {
+			
 			this.motionY = 0;
-			this.worldObj.setBlock((int) this.posX, (int) this.targetY, (int) this.posZ, BSABlocks.elevatorBlock.blockID);
+			this.worldObj.setBlock(this.targetX, this.targetY, this.targetZ, BSABlocks.elevatorBlock.blockID);
 			this.setDead();
 		}
 	}
@@ -77,14 +91,22 @@ public class ElevatorBlockEntity extends Entity {
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbt) {
 		this.currentY = nbt.getFloat("currentY");
+		
+		this.targetX = nbt.getInteger("targetX");
 		this.targetY = nbt.getInteger("targetY");
+		this.targetZ = nbt.getInteger("targetZ");
+		
 		this.up = nbt.getBoolean("uo");
 	}
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound nbt) {
 		nbt.setFloat("currentY", this.currentY);
-		nbt.setInteger("targetY", this.targetY);
+		
+		this.targetX = nbt.getInteger("targetX");
+		this.targetY = nbt.getInteger("targetY");
+		this.targetZ = nbt.getInteger("targetZ");
+		
 		nbt.setBoolean("up", this.up);
 	}
 
