@@ -55,10 +55,10 @@ public class BSABlocks {
 		EngElecMachBlock.registry();
 		
 		ThermalGeneratorMachBlock.registry();
-		
+		/*
 		elevatorControllerBlock = ElevatorControllerBlock.registry();
 		elevatorFloorBlock = ElevatorFloorBlock.registry();
-		elevatorBlock = ElevatorBlock.registry();
+		elevatorBlock = ElevatorBlock.registry();*/
 	}
 
 }
