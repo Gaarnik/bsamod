@@ -29,7 +29,7 @@ public class ElevatorConGUI extends GuiContainer {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.func_110434_K().func_110577_a(background);
+		this.mc.getTextureManager().bindTexture(background);
 		
 		containerWidth = (this.width - this.xSize) / 2;
 		containerHeight = (this.height - this.ySize) / 2;

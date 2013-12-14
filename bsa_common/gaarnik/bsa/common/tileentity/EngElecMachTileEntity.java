@@ -1,17 +1,15 @@
 package gaarnik.bsa.common.tileentity;
 
 import gaarnik.bsa.common.BSAMod;
-
 import gaarnik.bsa.common.block.BSABlocks;
 import gaarnik.bsa.common.block.EngElecMachBlock;
 import gaarnik.bsa.common.recipe.EngMachRecipe;
-import ic2.api.Direction;
-import ic2.api.tile.IWrenchable;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.network.INetworkDataProvider;
 import ic2.api.network.INetworkTileEntityEventListener;
 import ic2.api.network.NetworkHelper;
+import ic2.api.tile.IWrenchable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,30 +97,6 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 		}
 
 		super.invalidate();
-	}
-
-	@Override
-	public int injectEnergy(Direction directionFrom, int amount) {
-		if(amount > MAX_INPUT) {
-			if (!BSAMod.explodeMachineAt(worldObj, xCoord, yCoord, zCoord)) {
-				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2.0F, true);
-				//remove machine block (too resistant for explosion)
-				worldObj.setBlock(xCoord, yCoord, zCoord, 0);
-			}
-
-			invalidate();
-			return 0;
-		}
-
-		this.energyStored += amount;
-		int excess = 0;
-
-		if (this.energyStored > MAX_ENERGY) {
-			excess = this.energyStored - MAX_ENERGY;
-			this.energyStored = MAX_ENERGY;
-		}
-
-		return excess;
 	}
 
 	public void smeltItem() {
@@ -226,6 +200,41 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 	@Override
 	public List<String> getNetworkedFields() {
 		return networkedFileds;
+	}
+
+	// *******************************************************************
+	@Override
+	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+		return true;
+	}
+
+	@Override
+	public double demandedEnergyUnits() {
+		return (double) (MAX_ENERGY - this.energyStored);
+	}
+
+	@Override
+	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+		if(amount > MAX_INPUT) {
+			if (!BSAMod.explodeMachineAt(worldObj, xCoord, yCoord, zCoord)) {
+				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2.0F, true);
+				//remove machine block (too resistant for explosion)
+				worldObj.setBlock(xCoord, yCoord, zCoord, 0);
+			}
+
+			invalidate();
+			return 0;
+		}
+
+		this.energyStored += amount;
+		double excess = 0;
+
+		if (this.energyStored > MAX_ENERGY) {
+			excess = this.energyStored - MAX_ENERGY;
+			this.energyStored = MAX_ENERGY;
+		}
+
+		return excess;
 	}
 
 	// *******************************************************************
@@ -378,17 +387,6 @@ public class EngElecMachTileEntity extends TileEntity implements ISidedInventory
 	}
 
 	// *******************************************************************
-	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) {
-		return true;
-	}
-
-	@Override
-	public boolean isAddedToEnergyNet() { return this.addedToNetwork; }
-
-	@Override
-	public int demandsEnergy() { return MAX_ENERGY - this.energyStored; }
-
 	@Override
 	public int getMaxSafeInput() { return MAX_INPUT; }
 

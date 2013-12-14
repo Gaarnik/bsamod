@@ -1,17 +1,14 @@
 package gaarnik.bsa.common.tileentity;
 
 import gaarnik.bsa.common.BSAMod;
-
 import gaarnik.bsa.common.block.BSABlocks;
-import ic2.api.Direction;
-import ic2.api.tile.IWrenchable;
-import ic2.api.energy.event.EnergyTileSourceEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.network.INetworkDataProvider;
 import ic2.api.network.INetworkTileEntityEventListener;
 import ic2.api.network.NetworkHelper;
+import ic2.api.tile.IWrenchable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySource, IEnergySink, IWrenchable, INetworkDataProvider, INetworkTileEntityEventListener {
@@ -91,9 +89,11 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 				this.stored = MAX_ENERGY;
 		}
 
-		int output = (int) Math.min(this.getMaxEnergyOutput(), this.stored);
-		if (output > 0)
-			this.stored = ((float)(this.stored + (sendEnergy(output) - output)));
+		/*int output = (int) Math.min(this.getOfferedEnergy(), this.stored);
+		if (output > 0) {
+			//int amount = sendEnergy(output) - output);
+			//this.stored = ((float)(this.stored + amount);
+		}*/
 	}
 
 	@Override
@@ -125,28 +125,28 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 
 	// *******************************************************************
 	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, Direction direction) {
+	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
 		int metadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
 
 		switch (metadata) {
 
 		case 0:
-			return direction == Direction.YN;
+			return direction == ForgeDirection.DOWN;
 
 		case 1:
-			return direction == Direction.YP;
+			return direction == ForgeDirection.UP;
 
 		case 2:
-			return direction == Direction.ZN;
+			return direction == ForgeDirection.NORTH;
 
 		case 3:
-			return direction == Direction.ZP;
+			return direction == ForgeDirection.SOUTH;
 
 		case 4:
-			return direction == Direction.XN;
+			return direction == ForgeDirection.WEST;
 
 		case 5:
-			return direction == Direction.XP;
+			return direction == ForgeDirection.EAST;
 
 		default:
 			return false;
@@ -155,28 +155,28 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 	}
 
 	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, Direction direction) {
+	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
 		int metadata = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
 
 		switch(metadata) {
 
 		case 0:
-			return direction != Direction.YN;
+			return direction != ForgeDirection.DOWN;
 
 		case 1:
-			return direction != Direction.YP;
+			return direction != ForgeDirection.UP;
 
 		case 2:
-			return direction != Direction.ZN;
+			return direction != ForgeDirection.NORTH;
 
 		case 3:
-			return direction != Direction.ZP;
+			return direction != ForgeDirection.SOUTH;
 
 		case 4:
-			return direction != Direction.XN;
+			return direction != ForgeDirection.WEST;
 
 		case 5:
-			return direction != Direction.XP;
+			return direction != ForgeDirection.EAST;
 
 		default:
 			return false;
@@ -185,7 +185,12 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 	}
 
 	@Override
-	public int injectEnergy(Direction directionFrom, int amount) {
+	public double demandedEnergyUnits() {
+		return (double) (MAX_ENERGY - this.stored);
+	}
+
+	@Override
+	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
 		if(amount > this.getMaxSafeInput()) {
 			if (!BSAMod.explodeMachineAt(worldObj, xCoord, yCoord, zCoord)) {
 				worldObj.createExplosion(null, xCoord, yCoord, zCoord, 2.0F, true);
@@ -197,14 +202,25 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 		}
 
 		this.stored += amount;
-		int excess = 0;
+		double excess = 0;
 
 		if (this.stored > MAX_ENERGY) {
-			excess = (int) (this.stored - MAX_ENERGY);
+			excess = (double) (this.stored - MAX_ENERGY);
 			this.stored = MAX_ENERGY;
 		}
 
 		return excess;
+	}
+
+	@Override
+	public double getOfferedEnergy() {
+		return Math.min(this.stored, this.getMaxSafeInput());
+	}
+
+	@Override
+	public void drawEnergy(double amount) {
+		this.stored -= amount;
+		if(this.stored < 0) this.stored = 0;
 	}
 
 	// *******************************************************************
@@ -238,25 +254,8 @@ public class ThermalGeneratorTileEntity extends TileEntity implements IEnergySou
 	}
 
 	// *******************************************************************
-	private int sendEnergy(int send) {
-		EnergyTileSourceEvent event = new EnergyTileSourceEvent(this, send);
-		MinecraftForge.EVENT_BUS.post(event);
-
-		return event.amount;
-	}
-
-	// *******************************************************************
-	@Override
-	public int getMaxEnergyOutput() { return 32; }
-
 	@Override
 	public int getMaxSafeInput() { return 32; }
-
-	@Override
-	public int demandsEnergy() { return (int) (MAX_ENERGY - this.stored); }
-
-	@Override
-	public boolean isAddedToEnergyNet() { return this.addedToNetwork; }
 
 	public boolean isUseableByPlayer(EntityPlayer player) {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : player.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;

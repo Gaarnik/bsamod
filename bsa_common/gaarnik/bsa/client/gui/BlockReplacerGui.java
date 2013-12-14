@@ -26,7 +26,7 @@ public class BlockReplacerGui extends GuiContainer {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.func_110434_K().func_110577_a(background);
+		this.mc.getTextureManager().bindTexture(background);
 		
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		

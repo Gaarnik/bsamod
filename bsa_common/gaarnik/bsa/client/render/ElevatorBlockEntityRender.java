@@ -26,7 +26,7 @@ public class ElevatorBlockEntityRender extends Render {
 		//GL11.glTranslatef((float) x + 0.5F, (float) y - 0.5F, (float) z + 0.5F);
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
-		renderManager.renderEngine.func_110577_a(TEXTURE);
+		renderManager.renderEngine.bindTexture(TEXTURE);
 		
 		this.elevator.renderElevator();
 		
@@ -34,7 +34,7 @@ public class ElevatorBlockEntityRender extends Render {
 	}
 
 	@Override
-	protected ResourceLocation func_110775_a(Entity entity) {
+	protected ResourceLocation getEntityTexture(Entity entity) {
 		return TEXTURE;
 	}
 
